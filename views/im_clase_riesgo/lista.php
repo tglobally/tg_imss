@@ -56,10 +56,10 @@ $url_icons = (new views())->url_icons;
                             </a>
 
                         </th>
-                        <th><?php echo $registro->em_empleado_id; ?></th>
-                        <th><?php echo $registro->em_empleado_codigo; ?></th>
-                        <th><?php echo $registro->em_empleado_codigo_bis; ?></th>
-                        <th><?php echo $registro->em_empleado_descripcion; ?></th>
+                        <th><?php echo $registro->im_clase_riesgo_id; ?></th>
+                        <th><?php echo $registro->im_clase_riesgo_codigo; ?></th>
+                        <th><?php echo $registro->im_clase_riesgo_codigo_bis; ?></th>
+                        <th><?php echo $registro->im_clase_riesgo_descripcion; ?></th>
                     </tr>
                 <?php } ?>
 
