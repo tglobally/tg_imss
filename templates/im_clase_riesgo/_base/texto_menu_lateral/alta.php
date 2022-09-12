@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Alta Empleado</span>
+<span class="texto-menu-lateral">Alta Clase Riesgo</span>
