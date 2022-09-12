@@ -6,14 +6,8 @@
             <img src="<?php echo (new views())->url_assets.'img/stepper/1.svg'?>" class="img-seccion">
         </div>
         <div class="col-md-8">
-            <h3>Alta Empleado</h3>
-            <?php include "templates/em_empleado/_base/buttons/1.azul.alta.php"; ?>
-            <hr class="hr-menu-lateral">
-            <?php include "templates/em_empleado/_base/buttons/2.gris.fiscales.php"; ?>
-            <hr class="hr-menu-lateral">
-            <?php include "templates/em_empleado/_base/buttons/3.gris.imss.php"; ?>
-            <hr class="hr-menu-lateral">
-            <?php include "templates/em_empleado/_base/buttons/4.gris.cuenta_bancaria.php"; ?>
+            <h3>Alta Registro Patronal</h3>
+            <?php include "templates/im_registro_patronal/_base/buttons/1.azul.alta.php"; ?>
         </div>
     </div>
 </div>
