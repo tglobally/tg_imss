@@ -6,7 +6,7 @@
         <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
 
         <div class="  form-main" id="form">
-            <form method="post" action="./index.php?seccion=em_empleado&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
+            <form method="post" action="./index.php?seccion=im_clase_riesgo&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
 
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->codigo_bis; ?>
