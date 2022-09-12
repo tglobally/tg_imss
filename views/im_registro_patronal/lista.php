@@ -5,7 +5,7 @@ use config\views;
 $url_icons = (new views())->url_icons;
 ?>
 
-<?php include 'templates/im_clase_riesgo/lista/secciones.php'; ?>
+<?php include 'templates/im_registro_patronal/lista/secciones.php'; ?>
 
 <div class="col-md-9 info-lista">
     <div class="col-lg-12 content">
@@ -38,8 +38,8 @@ $url_icons = (new views())->url_icons;
                     <th scope="col">Acciones</th>
                     <th scope="col">Id</th>
                     <th scope="col">Codigo</th>
-                    <th scope="col">Cod Bis</th>
                     <th scope="col">Descripcion</th>
+                    <th scope="col">Empresa</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -56,10 +56,10 @@ $url_icons = (new views())->url_icons;
                             </a>
 
                         </th>
-                        <th><?php echo $registro->em_empleado_id; ?></th>
-                        <th><?php echo $registro->em_empleado_codigo; ?></th>
-                        <th><?php echo $registro->em_empleado_codigo_bis; ?></th>
-                        <th><?php echo $registro->em_empleado_descripcion; ?></th>
+                        <th><?php echo $registro->im_registro_patronal_id; ?></th>
+                        <th><?php echo $registro->im_registro_patronal_codigo; ?></th>
+                        <th><?php echo $registro->im_registro_patronal_descripcion; ?></th>
+                        <th><?php echo $registro->im_registro_patronal_descripcion_select; ?></th>
                     </tr>
                 <?php } ?>
 
