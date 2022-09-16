@@ -24,6 +24,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_im_registro_patronal = '';
     public string $link_alta_im_clase_riesgo = '';
     public string $link_lista_im_clase_riesgo = '';
+    public string $link_lista_im_movimiento = '';
 
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
@@ -70,6 +71,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=im_clase_riesgo&accion=lista&session_id=$this->session_id";
         $this->link_lista_im_clase_riesgo = $hd;
+
+        $hd = "index.php?seccion=im_movimiento&accion=lista&session_id=$this->session_id";
+        $this->link_lista_im_movimiento = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
