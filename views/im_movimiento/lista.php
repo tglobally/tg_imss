@@ -56,10 +56,10 @@ $url_icons = (new views())->url_icons;
                             </a>
 
                         </th>
-                        <th><?php echo $registro->im_registro_patronal_id; ?></th>
-                        <th><?php echo $registro->im_registro_patronal_codigo; ?></th>
-                        <th><?php echo $registro->im_registro_patronal_descripcion; ?></th>
-                        <th><?php echo $registro->im_registro_patronal_descripcion_select; ?></th>
+                        <th><?php echo $registro->im_movimiento_id; ?></th>
+                        <th><?php echo $registro->im_movimiento_codigo; ?></th>
+                        <th><?php echo $registro->im_movimiento_descripcion; ?></th>
+                        <th><?php echo $registro->im_movimiento_descripcion_select; ?></th>
                     </tr>
                 <?php } ?>
 
