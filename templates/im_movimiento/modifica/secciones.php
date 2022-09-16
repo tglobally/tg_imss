@@ -7,7 +7,7 @@
         </div>
         <div class="col-md-8">
             <h3>Modifica Registro Patronal</h3>
-            <?php include "templates/im_registro_patronal/_base/buttons/1.azul.modifica.php"; ?>
+            <?php include "templates/im_movimiento/_base/buttons/1.azul.modifica.php"; ?>
         </div>
     </div>
 </div>

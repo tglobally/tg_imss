@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Modifica Registro Patronal</span>
+<span class="texto-menu-lateral">Modifica Movimiento</span>
