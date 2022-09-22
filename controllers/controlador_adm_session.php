@@ -21,6 +21,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $mensaje_html = '';
 
     public string $link_lista_im_tipo_salario_minimo = '';
+    public string $link_lista_im_salario_minimo = '';
     public string $link_alta_im_registro_patronal = '';
     public string $link_lista_im_registro_patronal = '';
     public string $link_alta_im_clase_riesgo = '';
@@ -64,6 +65,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=im_tipo_salario_minimo&accion=lista&session_id=$this->session_id";
         $this->link_lista_im_tipo_salario_minimo= $hd;
+
+        $hd = "index.php?seccion=im_salario_minimo&accion=lista&session_id=$this->session_id";
+        $this->link_lista_im_salario_minimo= $hd;
 
         $hd = "index.php?seccion=im_registro_patronal&accion=alta&session_id=$this->session_id";
         $this->link_alta_im_registro_patronal= $hd;
