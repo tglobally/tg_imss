@@ -18,6 +18,7 @@
                 <?php echo $controlador->inputs->select->em_empleado_id; ?>
                 <?php echo $controlador->inputs->fecha; ?>
                 <?php echo $controlador->inputs->salario_diario; ?>
+                <?php echo $controlador->inputs->salario_diario_integrado; ?>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>
