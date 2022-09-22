@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_cat_gen\controllers\controlador_nom_conf_nomina $controlador */ ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_tipo_salario_minimo $controlador */ ?>
 <?php include $controlador->include_menu_secciones; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
@@ -7,13 +7,12 @@
 
 
         <div class="  form-main" id="form">
-            <form method="post" action="./index.php?seccion=nom_conf_nomina&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
+            <form method="post" action="./index.php?seccion=im_tipo_salario_minimo&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->codigo_bis; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->select->nom_conf_factura_id; ?>
-                <?php echo $controlador->inputs->select->cat_sat_periodicidad_pago_nom_id; ?>
-                <?php echo $controlador->inputs->select->cat_sat_tipo_nomina_id; ?>
+                <?php echo $controlador->inputs->descripcion_select; ?>
+                <?php echo $controlador->inputs->alias; ?>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " >Guarda</button>
