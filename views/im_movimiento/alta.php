@@ -8,11 +8,6 @@
         <div class="  form-main" id="form">
             <form method="post" action="./index.php?seccion=im_movimiento&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
 
-                <?php echo $controlador->inputs->codigo; ?>
-                <?php echo $controlador->inputs->codigo_bis; ?>
-                <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->descripcion_select; ?>
-                <?php echo $controlador->inputs->alias; ?>
                 <?php echo $controlador->inputs->select->im_tipo_movimiento_id; ?>
                 <?php echo $controlador->inputs->select->im_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->select->em_empleado_id; ?>
