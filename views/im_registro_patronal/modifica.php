@@ -9,11 +9,7 @@
             <form method="post" action="./index.php?seccion=im_registro_patronal&accion=modifica_bd&session_id=<?php echo $controlador->session_id; ?>&resgistro_id=<?php echo $controlador->registro_id; ?>" class="form-additional">
 
                 <?php echo $controlador->inputs->id; ?>
-                <?php echo $controlador->inputs->codigo; ?>
-                <?php echo $controlador->inputs->codigo_bis; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->descripcion_select; ?>
-                <?php echo $controlador->inputs->alias; ?>
                 <?php echo $controlador->inputs->select->fc_csd_id; ?>
                 <?php echo $controlador->inputs->select->im_clase_riesgo_id; ?>
 
