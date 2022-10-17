@@ -35,31 +35,23 @@ $url_icons = (new views())->url_icons;
             <table class="table table-dark">
                 <thead>
                 <tr>
-                    <th scope="col">Acciones</th>
-                    <th scope="col">Id</th>
-                    <th scope="col">Codigo</th>
-                    <th scope="col">Descripcion</th>
-                    <th scope="col">Empresa</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Empresa</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($controlador->registros as $registro){
-
-                    ?>
+                <?php foreach ($controlador->registros as $registro){?>
                     <tr>
-                        <th class="colum_accion" scope="row">
-                            <a class="icon_modifica_lista" href="<?php echo $registro->link_modifica; ?>">
-                                <img src="<?php echo $url_icons; ?>icon_modifica.svg">
-                            </a>
-                            <a class="icon_elimina_lista" href="<?php echo $registro->link_elimina_bd; ?>">
-                                <img src="<?php echo $url_icons; ?>icon_elimina.svg">
-                            </a>
-
-                        </th>
-                        <th><?php echo $registro->im_registro_patronal_id; ?></th>
-                        <th><?php echo $registro->im_registro_patronal_codigo; ?></th>
-                        <th><?php echo $registro->im_registro_patronal_descripcion; ?></th>
-                        <th><?php echo $registro->im_registro_patronal_descripcion_select; ?></th>
+                        <td><?php echo $registro->im_registro_patronal_id; ?></td>
+                        <td><?php echo $registro->im_registro_patronal_codigo; ?></td>
+                        <td><?php echo $registro->im_registro_patronal_descripcion; ?></td>
+                        <td><?php echo $registro->im_registro_patronal_descripcion_select; ?></td>
+                        <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
+                        <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
                     </tr>
                 <?php } ?>
 
