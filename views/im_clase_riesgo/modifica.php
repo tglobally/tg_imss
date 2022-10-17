@@ -20,8 +20,8 @@
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>
                     </div>
-                    <div class="col-md-6 ">
-                        <a href="index.php?seccion=im_clase_riesgo&accion=fiscales&session_id=<?php echo $controlador->session_id; ?>&resgistro_id=<?php echo $controlador->registro_id; ?>"  class="btn btn-info btn-guarda col-md-12 ">Siguiente</a>
+                    <div class="col-md-6">
+                        <a href="<?php echo $controlador->link_lista ?>" class="btn btn-info btn-guarda col-md-12 ">Regresar</a>
                     </div>
                 </div>
             </form>
