@@ -54,7 +54,7 @@
         "gamboa.martin/services": "dev-main",
         "gamboa.martin/template": "dev-main",
         "gamboa.martin/system": "dev-main",
-        "tglobally/template_tg": "^1.0.0",
+        "tglobally/template_tg": "dev-main",
         "gamboa.martin/template_1": "dev-main",
         "gamboa.martin/js_base": "dev-master",
         "gamboa.martin/xml_cfdi_4": "dev-master",
