@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_empleado\controllers\controlador_em_empleado $controlador */ ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_registro_patronal $controlador */ ?>
 <?php include 'templates/im_registro_patronal/alta/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
@@ -9,8 +9,8 @@
             <form method="post" action="./index.php?seccion=im_registro_patronal&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
 
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->select->fc_csd_id; ?>
-                <?php echo $controlador->inputs->select->im_clase_riesgo_id; ?>
+                <?php echo $controlador->inputs->fc_csd_id; ?>
+                <?php echo $controlador->inputs->im_clase_riesgo_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
