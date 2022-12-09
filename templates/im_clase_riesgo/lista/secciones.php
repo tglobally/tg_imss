@@ -1,4 +1,4 @@
-<div class="col-md-3 secciones">
+<div class="col-md-2 secciones">
     <div class="col-md-12 int_secciones ">
         <div class="col-md-8">
             <h3>Clases de Riesgo</h3>
