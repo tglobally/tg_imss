@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_empleado\controllers\controlador_em_empleado  $controlador */ ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_clase_riesgo $controlador */; ?>
 <?php
 
 use config\views;

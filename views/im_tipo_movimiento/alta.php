@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_empleado\controllers\controlador_em_empleado $controlador */ ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_tipo_movimiento  $controlador */ ?>
 <?php include 'templates/im_tipo_movimiento/alta/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">

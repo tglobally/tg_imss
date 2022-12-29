@@ -1,5 +1,5 @@
-<?php /** @var \tglobally\tg_empleado\controllers\controlador_em_empleado $controlador */ ?>
-<?php include 'templates/im_clase_riesgo/alta/secciones.php'; ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_clase_riesgo $controlador */
+include 'templates/im_clase_riesgo/alta/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 
