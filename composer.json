@@ -68,8 +68,8 @@
         "gamboa.martin/facturacion": "^1.0.0",
         "gamboa.martin/banco": "^1.0.0",
         "gamboa.martin/proceso": "^2.0.0",
-        "gamboa.martin/empleado": "^1.0.0",
-        "gamboa.martin/im_registro_patronal": "^1.0.0"
+        "gamboa.martin/empleado": "dev-main",
+        "gamboa.martin/im_registro_patronal": "dev-main"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
