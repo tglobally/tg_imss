@@ -1,11 +1,11 @@
-<?php /** @var \tglobally\tg_empleado\controllers\controlador_em_empleado  $controlador */ ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_tipo_salario_minimo  $controlador */ ?>
 <?php
 
 use config\views;
 $url_icons = (new views())->url_icons;
 ?>
 
-<?php include 'templates/im_clase_riesgo/lista/secciones.php'; ?>
+<?php include 'templates/im_salario_minimo/lista/secciones.php'; ?>
 
 <div class="col-md-9 info-lista">
     <div class="col-lg-12 content">
