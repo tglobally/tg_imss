@@ -8,9 +8,9 @@
         <div class="  form-main" id="form">
             <form method="post" action="./index.php?seccion=im_registro_patronal&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
 
-                <?php echo $controlador->inputs->descripcion; ?>
                 <?php echo $controlador->inputs->fc_csd_id; ?>
                 <?php echo $controlador->inputs->im_clase_riesgo_id; ?>
+                <?php echo $controlador->inputs->descripcion; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
