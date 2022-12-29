@@ -1,6 +1,6 @@
 <?php /** @var \tglobally\tg_imss\controllers\controlador_im_tipo_salario_minimo $controlador */
 $seccion = $controlador->seccion;
-$number = '1.gris';
+$number = '1.azul';
 $session_id = $controlador->session_id;
 ?>
 <div class="col-md-2 secciones">
