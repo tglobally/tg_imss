@@ -8,14 +8,15 @@
         <div class="  form-main" id="form">
             <form method="post" action="./index.php?seccion=im_movimiento&accion=modifica_bd&session_id=<?php echo $controlador->session_id; ?>&registro_id=<?php echo $controlador->registro_id; ?>" class="form-additional">
 
-                <?php echo $controlador->inputs->id; ?>
                 <?php echo $controlador->inputs->im_tipo_movimiento_id; ?>
-                <?php echo $controlador->inputs->im_registro_patronal_id; ?>
+                <?php echo $controlador->inputs->em_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->em_empleado_id; ?>
                 <?php echo $controlador->inputs->fecha; ?>
                 <?php echo $controlador->inputs->factor_integracion; ?>
                 <?php echo $controlador->inputs->salario_diario; ?>
                 <?php echo $controlador->inputs->salario_diario_integrado; ?>
+                <?php echo $controlador->inputs->salario_mixto; ?>
+                <?php echo $controlador->inputs->salario_variable; ?>
                 <?php echo $controlador->inputs->observaciones; ?>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
