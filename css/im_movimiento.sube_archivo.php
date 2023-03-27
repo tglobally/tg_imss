@@ -7,6 +7,10 @@ include $ruta_template_base.'assets/css/_base_css.php';
 ?>
 <style>
 
+    .modal-lg {
+        width: 1300px;
+    }
+
     .formulario {
         display: flex;
         flex-direction: column;

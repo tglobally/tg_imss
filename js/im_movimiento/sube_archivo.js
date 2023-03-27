@@ -61,6 +61,8 @@ excel_input.addEventListener('change', async function () {
     $('#datos-movimiento').on('click', 'tbody tr', function (event) {
         $( "#datos-movimiento tbody tr" ).removeClass( "selected" )
         $(this).toggleClass('selected');
+        $('#exampleModal').modal({ show:true });
+
     });
 
 })
