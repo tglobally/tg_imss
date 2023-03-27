@@ -36,16 +36,24 @@ excel_input.addEventListener('change', async function () {
     const excel = new Excel(contenido);
 
     if(!$('#datos-movimiento').length){
-        $(".formulario").append("<table id='datos-movimiento' style='width: 100% !important; ' >");
+        $(".formulario").append("<table id='datos-movimiento' class='table table-striped datatable dataTable no-footer dtr-inline' style='width: 100% !important; ' >");
     }
 
-    const table = $('#datos-movimiento').DataTable({
-        searching: false,
-        paging: false,
-        ordering: false,
-        info: false,
-        columns: excel.header_table(),
-    });
+    let table;
+
+    if ( ! $.fn.DataTable.isDataTable( '#datos-movimiento' ) ) {
+         table = $('#datos-movimiento').DataTable({
+            searching: false,
+            paging: false,
+            ordering: false,
+            info: false,
+            columns: excel.header_table(),
+        });
+    } else {
+        table = $('#datos-movimiento').DataTable();
+    }
+
+    table.clear();
 
     table.rows.add(excel.rows().rows).draw();
     table.columns.adjust().draw();

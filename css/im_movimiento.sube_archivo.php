@@ -6,6 +6,22 @@ $ruta_template_base = (new views())->ruta_template_base;
 include $ruta_template_base.'assets/css/_base_css.php';
 ?>
 <style>
+
+    .formulario {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #datos-movimiento_wrapper {
+        margin: 20px;
+    }
+
+    #datos-movimiento thead, #datos-movimiento tbody{
+        font-size: 12px;
+    }
+
+
+
 .acciones_filter{
     display: flex;
     justify-content: center;
