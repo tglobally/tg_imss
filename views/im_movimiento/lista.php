@@ -1,11 +1,11 @@
-<?php /** @var \tglobally\tg_empleado\controllers\controlador_em_empleado  $controlador */ ?>
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_movimiento $controlador */ ?>
 <?php
 
 use config\views;
 $url_icons = (new views())->url_icons;
 ?>
 
-<?php include 'templates/im_movimiento/lista/secciones.php'; ?>
+<?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
 <div class="col-md-9 info-lista">
     <div class="col-lg-12 content">
