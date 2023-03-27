@@ -58,4 +58,12 @@ excel_input.addEventListener('change', async function () {
     table.rows.add(excel.rows().rows).draw();
     table.columns.adjust().draw();
 
+    $('#datos-movimiento').on('click', 'tbody tr', function (event) {
+        $( "#datos-movimiento tbody tr" ).removeClass( "selected" )
+        $(this).toggleClass('selected');
+    });
+
 })
+
+
+
