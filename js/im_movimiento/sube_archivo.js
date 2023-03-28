@@ -63,6 +63,17 @@ excel_input.addEventListener('change', async function () {
         $(this).toggleClass('selected');
         $('#exampleModal').modal({ show:true });
 
+        let selectedData = table.row( this ).data();
+
+        $('#nss').val(selectedData[3]);
+        $('#nombre').val(selectedData[4]);
+        $('#ap').val(selectedData[5]);
+        $('#am').val(selectedData[6]);
+        $('#salario_diario').val(selectedData[7]);
+        $('#salario_diario_integrado').val(selectedData[9]);
+
+        console.log(selectedData)
+
     });
 
 })
