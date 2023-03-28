@@ -43,7 +43,7 @@
 
                 <div class="row">
                     <div class="col-lg-6">
-                        <form method="post" action="<?php echo $controlador->link_em_empleado_modifica_bd; ?>" class="form-additional">
+                        <form id="em_empleado_update" class="form-additional">
                             <?php echo $controlador->inputs->nombre; ?>
                             <?php echo $controlador->inputs->ap; ?>
                             <?php echo $controlador->inputs->am; ?>
@@ -66,7 +66,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-info btn-guarda" name="btn_action_next" value="modifica">Actualiza</button>
+                <button type="submit" form="em_empleado_update" class="btn btn-info btn-guarda" name="btn_action_next" value="modifica">Actualiza</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
