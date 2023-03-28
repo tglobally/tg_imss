@@ -72,7 +72,30 @@ excel_input.addEventListener('change', async function () {
         $('#salario_diario').val(selectedData[7]);
         $('#salario_diario_integrado').val(selectedData[9]);
 
-        console.log(selectedData)
+        let url = get_url("em_empleado","get_empleado", {em_empleado_nss: selectedData[3]});
+
+        get_data(url, function (data) {
+
+            if(data.n_registros <= 0) {
+                $('#nss_preview').val("");
+                $('#nombre_preview').val("");
+                $('#ap_preview').val("");
+                $('#am_preview').val("");
+                $('#salario_diario_preview').val("");
+                $('#salario_diario_integrado_preview').val("");
+
+                alert(`El NSS ${selectedData[3]} no existe`);
+            } else {
+                let datos = data.registros[0];
+
+                $('#nss_preview').val(datos.em_empleado_nss);
+                $('#nombre_preview').val(datos.em_empleado_nombre);
+                $('#ap_preview').val(datos.em_empleado_ap);
+                $('#am_preview').val(datos.em_empleado_am);
+                $('#salario_diario_preview').val(datos.em_empleado_salario_diario);
+                $('#salario_diario_integrado_preview').val(datos.em_empleado_salario_diario_integrado);
+            }
+        });
 
     });
 
