@@ -35,6 +35,7 @@ let em_empleado_id = "";
 
 excel_input.addEventListener('change', async function () {
     const contenido = await readXlsxFile(excel_input.files[0]);
+
     const excel = new Excel(contenido);
 
     if (!$('#datos-movimiento').length) {
