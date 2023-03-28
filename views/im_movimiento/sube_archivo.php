@@ -34,17 +34,40 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">DATOS DEL EMPLEADO</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Modal body text goes here.</p>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <form method="post" action="<?php echo $controlador->link_em_empleado_modifica_bd; ?>" class="form-additional">
+                            <?php echo $controlador->inputs->nombre; ?>
+                            <?php echo $controlador->inputs->ap; ?>
+                            <?php echo $controlador->inputs->am; ?>
+                            <?php echo $controlador->inputs->nss; ?>
+                            <?php echo $controlador->inputs->salario_diario; ?>
+                            <?php echo $controlador->inputs->salario_diario_integrado; ?>
+                        </form>
+                    </div>
+                    <div class="col-lg-6">
+                        <form class="form-additional">
+                            <?php echo $controlador->inputs->nombre_preview; ?>
+                            <?php echo $controlador->inputs->ap_preview; ?>
+                            <?php echo $controlador->inputs->am_preview; ?>
+                            <?php echo $controlador->inputs->nss_preview; ?>
+                            <?php echo $controlador->inputs->salario_diario_preview; ?>
+                            <?php echo $controlador->inputs->salario_diario_integrado_preview; ?>
+                        </form>
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save changes</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-info btn-guarda" name="btn_action_next" value="modifica">Actualiza</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

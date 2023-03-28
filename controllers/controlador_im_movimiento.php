@@ -20,6 +20,28 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         }
     }
 
+    protected function campos_view(): array
+    {
+        $keys = new stdClass();
+        $keys->inputs = array('codigo', 'descripcion', 'salario_diario', 'salario_diario_integrado', 'observaciones',
+            'factor_integracion', 'salario_mixto', 'salario_variable', 'nombre', 'ap', 'am', 'nss', 'nombre_preview',
+            'ap_preview', 'am_preview', 'nss_preview', 'salario_diario_preview', 'salario_diario_integrado_preview');
+        $keys->fechas = array('fecha');
+        $keys->selects = array();
+
+        $init_data = array();
+        $init_data['em_empleado'] = "gamboamartin\\empleado";
+        $init_data['im_tipo_movimiento'] = "gamboamartin\\im_registro_patronal";
+        $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
+
+        $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
+        }
+
+        return $campos_view;
+    }
+
     private function init_sidebar(): stdClass|array
     {
         $menu_items = new stdClass();
@@ -62,6 +84,83 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         return $menu_items;
     }
 
+    protected function key_selects_txt(array $keys_selects): array
+    {
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'nombre',
+            keys_selects: $keys_selects, place_holder: 'Nombre');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'nombre_preview',
+            keys_selects: $keys_selects, place_holder: 'Nombre');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['nombre_preview']->disabled = true;
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'ap',
+            keys_selects: $keys_selects, place_holder: 'Apellido Paterno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'ap_preview',
+            keys_selects: $keys_selects, place_holder: 'Apellido Paterno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['ap_preview']->disabled = true;
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'am',
+            keys_selects: $keys_selects, place_holder: 'Apellido Materno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'am_preview',
+            keys_selects: $keys_selects, place_holder: 'Apellido Materno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['am_preview']->disabled = true;
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'nss',
+            keys_selects: $keys_selects, place_holder: 'NSS');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'nss_preview',
+            keys_selects: $keys_selects, place_holder: 'NSS');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['nss_preview']->disabled = true;
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'salario_diario_preview',
+            keys_selects: $keys_selects, place_holder: 'Salario Diario');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['salario_diario_preview']->disabled = true;
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'salario_diario_integrado_preview',
+            keys_selects: $keys_selects, place_holder: 'Salario Diario Integrado');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['salario_diario_integrado_preview']->disabled = true;
+
+        $keys_selects = parent::key_selects_txt($keys_selects);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+
+        return  $keys_selects;
+    }
+
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false,bool $menu_lateral_active = false): array
     {
         $menu_item = array();
@@ -71,6 +170,22 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         $menu_item['menu_lateral_active'] = $menu_lateral_active;
 
         return $menu_item;
+    }
+
+    public function sube_archivo(bool $header, bool $ws = false)
+    {
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: array());
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
     }
 
 }
