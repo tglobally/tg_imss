@@ -10,6 +10,11 @@
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_alta_bd; ?>" class="form-additional">
                 <?php echo $controlador->inputs->em_empleado_id; ?>
+                <div class="control-group col-sm-2">
+                    <button class="btn btn-info btn-guarda" disabled style="width: 100%;" value="modifica">Editar</button>
+                </div>
+
+
                 <?php echo $controlador->inputs->em_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->im_tipo_movimiento_id; ?>
                 <?php echo $controlador->inputs->fecha; ?>

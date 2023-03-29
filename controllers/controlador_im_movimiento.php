@@ -20,6 +20,38 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         }
     }
 
+    public function alta(bool $header, bool $ws = false): array|string
+    {
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $keys_selects['em_empleado_id']->cols = 10;
+
+        $this->row_upd->fecha = date('Y-m-d');
+        $this->row_upd->salario_diario = 0;
+        $this->row_upd->salario_diario_integrado = 0;
+        $this->row_upd->salario_mixto = 0;
+        $this->row_upd->salario_variable = 0;
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+
+
     protected function campos_view(): array
     {
         $keys = new stdClass();
