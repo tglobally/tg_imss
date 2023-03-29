@@ -13,8 +13,6 @@
                 <div class="control-group col-sm-2">
                     <button id="editar_empleado" type="button" class="btn btn-info btn-guarda" disabled style="width: 100%;" data-toggle="modal" data-target="#editar_empleado_modal">Editar</button>
                 </div>
-
-
                 <?php echo $controlador->inputs->em_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->im_tipo_movimiento_id; ?>
                 <?php echo $controlador->inputs->fecha; ?>

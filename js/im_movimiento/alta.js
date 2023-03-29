@@ -96,10 +96,7 @@ $('#em_empleado_update').submit(function (e) {
                 console.log(error)
             }
         });
-
-
     }
-
 })
 
 let getData = async (url, acciones) => {

@@ -204,6 +204,33 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         return $menu_item;
     }
 
+    public function modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+        $keys_selects['em_empleado_id']->cols = 10;
+
+        $keys_selects['em_empleado_id']->id_selected = $this->registro['em_empleado_id'];
+        $keys_selects['im_tipo_movimiento_id']->id_selected = $this->registro['im_tipo_movimiento_id'];
+        $keys_selects['em_registro_patronal_id']->id_selected = $this->registro['em_registro_patronal_id'];
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        return $r_modifica;
+    }
+
     public function sube_archivo(bool $header, bool $ws = false)
     {
         $r_alta = $this->init_alta();

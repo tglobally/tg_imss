@@ -2,6 +2,7 @@ let url = getAbsolutePath();
 
 let session_id = getParameterByName('session_id');
 
+let btn_editar_empleado = $("#editar_empleado");
 let sl_em_empleado = $("#em_empleado_id");
 let sl_im_tipo_movimiento = $('#im_tipo_movimiento_id');
 let txt_salario_diario = $('#salario_diario');
@@ -29,6 +30,102 @@ txt_salario_diario.change(function (){
     let res = salario_diario * factor;
     txt_salario_diario_integrado.val(res.toFixed(2));
 });
+
+$( window ).load(function() {
+    let selected = sl_em_empleado.find('option:selected').val();
+
+    if (selected !== ""){
+
+        let url = get_url("em_empleado", "get_empleado", {em_empleado_id: selected});
+
+        get_data(url, function (data) {
+
+            if (data.n_registros <= 0) {
+                $('#nss').val("");
+                $('#nombre').val("");
+                $('#ap').val("");
+                $('#am').val("");
+
+                alert(`El empleado con ID: ${sselected} no existe`);
+            } else {
+                let datos = data.registros[0];
+
+                $('#nss').val(datos.em_empleado_nss);
+                $('#nombre').val(datos.em_empleado_nombre);
+                $('#ap').val(datos.em_empleado_ap);
+                $('#am').val(datos.em_empleado_am);
+            }
+        });
+    }
+});
+
+sl_em_empleado.change(function () {
+    let selected = $(this).find('option:selected').val();
+
+    btn_editar_empleado.prop("disabled", true);
+
+    if (selected !== ""){
+        btn_editar_empleado.removeAttr('disabled');
+
+        let url = get_url("em_empleado", "get_empleado", {em_empleado_id: selected});
+
+        get_data(url, function (data) {
+
+            if (data.n_registros <= 0) {
+                $('#nss').val("");
+                $('#nombre').val("");
+                $('#ap').val("");
+                $('#am').val("");
+
+                alert(`El empleado con ID: ${sselected} no existe`);
+            } else {
+                let datos = data.registros[0];
+
+                $('#nss').val(datos.em_empleado_nss);
+                $('#nombre').val(datos.em_empleado_nombre);
+                $('#ap').val(datos.em_empleado_ap);
+                $('#am').val(datos.em_empleado_am);
+            }
+        });
+    }
+
+});
+
+$('#em_empleado_update').submit(function (e) {
+    e.preventDefault();
+
+    let nss = $('#nss').val();
+    let nombre = $('#nombre').val();
+    let ap = $('#ap').val();
+    let am = $('#am').val();
+
+    if (nss === '' || nombre === '' || ap === '') {
+        alert(`Datos incompletos`);
+        return false;
+    }
+
+    let selected = sl_em_empleado.find('option:selected').val();
+
+    let url = get_url("em_empleado", "modifica_bd", {registro_id: selected});
+
+    if (selected !== "") {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            async: true,
+            data: $('#em_empleado_update').serialize(),
+            success: function (response) {
+
+                get_data2("em_empleado", "get_empleado", {}, sl_em_empleado);
+
+                alert(response.mensaje);
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        });
+    }
+})
 
 let getData = async (url, acciones) => {
     fetch(url)
