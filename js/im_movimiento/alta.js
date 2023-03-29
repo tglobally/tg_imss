@@ -88,6 +88,8 @@ $('#em_empleado_update').submit(function (e) {
             data: $('#em_empleado_update').serialize(),
             success: function (response) {
 
+                get_data2("em_empleado", "get_empleado", {}, sl_em_empleado);
+
                 alert(response.mensaje);
             },
             error: function (error) {
