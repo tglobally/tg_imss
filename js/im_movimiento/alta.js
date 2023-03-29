@@ -26,10 +26,31 @@ sl_im_tipo_movimiento.change(function (event) {
 sl_em_empleado.change(function () {
     let selected = $(this).find('option:selected').val();
 
-    btn_editar_empleado.removeAttr('disabled');
+    btn_editar_empleado.prop("disabled", true);
 
-    if (selected === ""){
-        btn_editar_empleado.prop("disabled", true);
+    if (selected !== ""){
+        btn_editar_empleado.removeAttr('disabled');
+
+        let url = get_url("em_empleado", "get_empleado", {em_empleado_id: selected});
+
+        get_data(url, function (data) {
+
+            if (data.n_registros <= 0) {
+                $('#nss').val("");
+                $('#nombre').val("");
+                $('#ap').val("");
+                $('#am').val("");
+
+                alert(`El empleado con ID: ${sselected} no existe`);
+            } else {
+                let datos = data.registros[0];
+
+                $('#nss').val(datos.em_empleado_nss);
+                $('#nombre').val(datos.em_empleado_nombre);
+                $('#ap').val(datos.em_empleado_ap);
+                $('#am').val(datos.em_empleado_am);
+            }
+        });
     }
 
 });
