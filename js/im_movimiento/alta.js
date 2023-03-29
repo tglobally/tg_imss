@@ -63,6 +63,43 @@ txt_salario_diario.change(function (){
     txt_salario_diario_integrado.val(res.toFixed(2));
 });
 
+$('#em_empleado_update').submit(function (e) {
+    e.preventDefault();
+
+    let nss = $('#nss').val();
+    let nombre = $('#nombre').val();
+    let ap = $('#ap').val();
+    let am = $('#am').val();
+
+    if (nss === '' || nombre === '' || ap === '') {
+        alert(`Datos incompletos`);
+        return false;
+    }
+
+    let selected = sl_em_empleado.find('option:selected').val();
+
+    let url = get_url("em_empleado", "modifica_bd", {registro_id: selected});
+
+    if (selected !== "") {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            async: true,
+            data: $('#em_empleado_update').serialize(),
+            success: function (response) {
+
+                alert(response.mensaje);
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        });
+
+
+    }
+
+})
+
 let getData = async (url, acciones) => {
     fetch(url)
         .then(response => response.json())
