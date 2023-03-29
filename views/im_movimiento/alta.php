@@ -11,7 +11,7 @@
             <form method="post" action="<?php echo $controlador->link_alta_bd; ?>" class="form-additional">
                 <?php echo $controlador->inputs->em_empleado_id; ?>
                 <div class="control-group col-sm-2">
-                    <button class="btn btn-info btn-guarda" disabled style="width: 100%;" value="modifica">Editar</button>
+                    <button id="editar_empleado" type="button" class="btn btn-info btn-guarda" disabled style="width: 100%;" data-toggle="modal" data-target="#editar_empleado_modal">Editar</button>
                 </div>
 
 
@@ -33,6 +33,36 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div id="editar_empleado_modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">DATOS DEL EMPLEADO</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form id="em_empleado_update" class="form-additional">
+                            <?php echo $controlador->inputs->nombre; ?>
+                            <?php echo $controlador->inputs->ap; ?>
+                            <?php echo $controlador->inputs->am; ?>
+                            <?php echo $controlador->inputs->nss; ?>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="em_empleado_update" class="btn btn-info btn-guarda" name="btn_action_next" value="modifica">Actualiza</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
         </div>
     </div>
 </div>

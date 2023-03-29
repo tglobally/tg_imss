@@ -2,6 +2,7 @@ let url = getAbsolutePath();
 
 let session_id = getParameterByName('session_id');
 
+let btn_editar_empleado = $("#editar_empleado");
 let sl_em_empleado = $("#em_empleado_id");
 let sl_im_tipo_movimiento = $('#im_tipo_movimiento_id');
 let txt_salario_diario = $('#salario_diario');
@@ -20,6 +21,17 @@ sl_im_tipo_movimiento.change(function (event) {
         txt_salario_diario.prop('disabled', false);
         txt_salario_diario_integrado.prop('disabled', false);
     }
+});
+
+sl_em_empleado.change(function () {
+    let selected = $(this).find('option:selected').val();
+
+    btn_editar_empleado.removeAttr('disabled');
+
+    if (selected === ""){
+        btn_editar_empleado.prop("disabled", true);
+    }
+
 });
 
 txt_salario_diario.change(function (){
