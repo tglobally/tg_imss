@@ -74,6 +74,28 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         return $campos_view;
     }
 
+    protected function init_datatable(): stdClass
+    {
+        $columns["im_movimiento_id"]["titulo"] = "Id";
+        $columns["em_empleado_nss"]["titulo"] = "NSS";
+        $columns["em_empleado_nombre"]["titulo"] = "Empleado";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap", "em_empleado_am");
+        $columns["em_registro_patronal_descripcion"]["titulo"] = "Registro Patronal";
+        $columns["im_tipo_movimiento_descripcion"]["titulo"] = "Tipo Movimiento";
+        $columns["im_movimiento_fecha"]["titulo"] = "Fecha";
+
+        $filtro = array("im_movimiento.id", "em_empleado.nss", "em_empleado.nombre", "em_empleado.ap", "em_empleado.am",
+            "em_registro_patronal.descripcion", "im_tipo_movimiento.descripcion", "im_movimiento.fecha");
+
+        $datatables = new stdClass();
+        $datatables->type = "scroll";
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
+    }
+
     private function init_sidebar(): stdClass|array
     {
         $menu_items = new stdClass();
