@@ -33,6 +33,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_im_uma = '';
     public string $link_lista_im_rcv = '';
     public string $link_lista_org_empresa = '';
+    public string $link_lista_com_cliente = '';
 
 
     /**
@@ -107,6 +108,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=org_empresa&accion=lista&session_id=$this->session_id";
         $this->link_lista_org_empresa = $hd;
+
+        $hd = "index.php?seccion=com_cliente&accion=lista&session_id=$this->session_id";
+        $this->link_lista_com_cliente = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
