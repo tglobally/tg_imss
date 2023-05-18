@@ -65,11 +65,11 @@
         "gamboa.martin/documento": "^6.0.0",
         "gamboa.martin/proceso":"^7.0.0",
         "gamboa.martin/xml_cfdi_4":"^2.0.0",
-        "gamboa.martin/nomina": "dev-master",
+        "gamboa.martin/nomina": "^1.0.0",
         "gamboa.martin/empleado": "^2.0.0",
         "gamboa.martin/im_registro_patronal": "^2.0.0",
-        "tglobally/template_tg": "^4.0.0"
-
+        "tglobally/template_tg": "^4.0.0",
+        "gamboa.martin/notificaciones": "^1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
