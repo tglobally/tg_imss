@@ -34,7 +34,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_im_rcv = '';
     public string $link_lista_org_empresa = '';
     public string $link_lista_com_cliente = '';
-
+    public string $link_lista_em_empleado = '';
 
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
@@ -111,6 +111,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=com_cliente&accion=lista&session_id=$this->session_id";
         $this->link_lista_com_cliente = $hd;
+
+        $hd = "index.php?seccion=em_empleado&accion=lista&session_id=$this->session_id";
+        $this->link_lista_em_empleado = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
