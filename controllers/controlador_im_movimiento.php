@@ -88,7 +88,7 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
             "em_registro_patronal.descripcion", "im_tipo_movimiento.descripcion", "im_movimiento.fecha");
 
         $datatables = new stdClass();
-        $datatables->type = "scroll";
+       /* $datatables->type = "scroll";*/
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
         $datatables->menu_active = true;
