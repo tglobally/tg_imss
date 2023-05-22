@@ -13,6 +13,7 @@ use gamboamartin\errores\errores;
 use JsonException;
 use models\adm_accion;
 use models\adm_usuario;
+use PDO;
 use stdClass;
 
 class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_session {
@@ -35,6 +36,14 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_org_empresa = '';
     public string $link_lista_com_cliente = '';
     public string $link_lista_em_empleado = '';
+
+
+    public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
+    {
+        parent::__construct($link, $paths_conf);
+
+        $this->titulo_pagina = "Inicio Sesion";
+    }
 
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
