@@ -4,10 +4,9 @@
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item">
-                <a href="./index.php?seccion=adm_session&accion=inicio&session_id=<?php echo $controlador->session_id ?>">Inicio</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">Lista</li>
+            <li class="breadcrumb-item"><a href="./index.php?seccion=adm_session&accion=inicio&session_id=<?php echo $controlador->session_id ?>">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo $controlador->link_lista?>">Lista</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Alta</li>
         </ol>
     </nav>
 
@@ -18,7 +17,7 @@
 
                     <div class="row">
                         <div class="col">
-                            <div class="card-title fs-2 fw-semibold">Listado de Prestaciones de Empresas</div>
+                            <div class="card-title fs-2 fw-semibold">Alta conf. Prestacion Empresa</div>
                         </div>
                         <div class="col-auto ms-auto">
                             <button class="btn btn-secondary btn-sm" type="button" data-coreui-toggle="dropdown" aria-expanded="false">
@@ -31,12 +30,22 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table mb-0 table-striped table-sm datatable"></table>
-                    </div>
+                    <form class="row g-3" method="post" action="<?php echo $controlador->link_alta_bd; ?>">
+
+                        <?php echo $controlador->inputs->codigo; ?>
+                        <?php echo $controlador->inputs->codigo_bis; ?>
+                        <?php echo $controlador->inputs->descripcion; ?>
+                        <?php echo $controlador->inputs->descripcion_select; ?>
+                        <?php echo $controlador->inputs->alias; ?>
+
+                        <div class="col-12 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary" name="btn_action_next">Registrar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+
