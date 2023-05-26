@@ -1,30 +1,51 @@
-<?php /** @var \tglobally\tg_imss\controllers\controlador_im_clase_riesgo $controlador */
-include 'templates/im_tipo_movimiento/modifica/secciones.php'; ?>
-<div class="col-md-9 formulario">
-    <div class="col-lg-12">
+<?php /** @var \tglobally\tg_imss\controllers\controlador_im_clase_riesgo $controlador */ ?>
 
-        <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
+<div class="container-lg">
 
-        <div class="  form-main" id="form">
-            <form method="post" action="<?php echo $controlador->link_modifica_bd; ?>" class="form-additional">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="./index.php?seccion=adm_session&accion=inicio&session_id=<?php echo $controlador->session_id ?>">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo $controlador->link_lista?>">Lista</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Modifica</li>
+        </ol>
+    </nav>
 
-                <?php echo $controlador->inputs->id; ?>
-                <?php echo $controlador->inputs->codigo; ?>
-                <?php echo $controlador->inputs->codigo_bis; ?>
-                <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->descripcion_select; ?>
-                <?php echo $controlador->inputs->alias; ?>
-                <?php echo $controlador->inputs->factor; ?>
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card mb-4">
+                <div class="card-body p-4">
 
-                <div class="buttons col-md-12">
-                    <div class="col-md-6">
-                        <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card-title fs-2 fw-semibold">Modifica Clase de Riesgo</div>
+                        </div>
+                        <div class="col-auto ms-auto">
+                            <button class="btn btn-secondary btn-sm" type="button" data-coreui-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-list-task icon me-2"></i>
+                                Acciones
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="<?php echo $controlador->link_alta?>">Alta</a></li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <a href="<?php echo $controlador->link_lista ?>" class="btn btn-info btn-guarda col-md-12 ">Regresar</a>
-                    </div>
+
+                    <form class="row g-3" method="post" action="<?php echo $controlador->link_modifica_bd; ?>">
+
+                        <?php echo $controlador->inputs->codigo; ?>
+                        <?php echo $controlador->inputs->codigo_bis; ?>
+                        <?php echo $controlador->inputs->descripcion; ?>
+                        <?php echo $controlador->inputs->descripcion_select; ?>
+                        <?php echo $controlador->inputs->alias; ?>
+                        <?php echo $controlador->inputs->factor; ?>
+
+                        <div class="col-12 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary" name="btn_action_next">Actualizar</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
+
 </div>
