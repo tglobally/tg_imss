@@ -91,7 +91,6 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
        /* $datatables->type = "scroll";*/
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
-        $datatables->menu_active = true;
 
         return $datatables;
     }
