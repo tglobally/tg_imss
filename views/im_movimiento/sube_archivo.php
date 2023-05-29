@@ -33,7 +33,7 @@
 
                     <form class="row g-3" method="post" action="./index.php?seccion=im_movimiento&accion=lee_archivo&session_id=<?php echo $controlador->session_id; ?>&registro_id=<?php echo $controlador->registro_id; ?>" enctype="multipart/form-data">
 
-                        <div class="control-group col-sm-12">
+                        <div class="control-group col-12">
                             <label class="control-label" for="archivo">Archivo Nomina</label>
                             <div class="controls">
                                 <input type="file" id="archivo" name="archivo" multiple />
