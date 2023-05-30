@@ -21,21 +21,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $include_menu = '';
     public string $mensaje_html = '';
 
-    public string $link_lista_im_tipo_salario_minimo = '';
-    public string $link_lista_im_salario_minimo = '';
-    public string $link_alta_im_registro_patronal = '';
-    public string $link_lista_im_registro_patronal = '';
-    public string $link_alta_im_clase_riesgo = '';
-    public string $link_lista_im_clase_riesgo = '';
-    public string $link_lista_im_movimiento = '';
-    public string $link_lista_im_tipo_movimiento = '';
-    public string $link_lista_im_codigo_clase = '';
-    public string $link_lista_im_conf_pres_empresa = '';
-    public string $link_lista_im_uma = '';
-    public string $link_lista_im_rcv = '';
-    public string $link_lista_org_empresa = '';
-    public string $link_lista_com_cliente = '';
-    public string $link_lista_em_empleado = '';
+    public string $link_inicio = '';
 
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
@@ -43,6 +29,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
         parent::__construct($link, $paths_conf);
 
         $this->titulo_pagina = "Inicio Sesion";
+        $this->seccion_titulo = "Inicio";
+
+        $this->link_inicio = "./index.php?seccion=adm_session&accion=inicio&session_id=<$this->session_id";
     }
 
     /**
@@ -79,53 +68,10 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
             return $this->retorno_error(mensaje:  'Error al generar template',data: $template, header: $header, ws: $ws);
         }
 
-        $hd = "index.php?seccion=im_tipo_salario_minimo&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_tipo_salario_minimo= $hd;
-
-        $hd = "index.php?seccion=im_salario_minimo&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_salario_minimo= $hd;
-
-        $hd = "index.php?seccion=im_registro_patronal&accion=alta&session_id=$this->session_id";
-        $this->link_alta_im_registro_patronal= $hd;
-
-        $hd = "index.php?seccion=im_registro_patronal&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_registro_patronal = $hd;
-
-        $hd = "index.php?seccion=im_clase_riesgo&accion=alta&session_id=$this->session_id";
-        $this->link_alta_im_clase_riesgo= $hd;
-
-        $hd = "index.php?seccion=im_clase_riesgo&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_clase_riesgo = $hd;
-
-        $hd = "index.php?seccion=im_movimiento&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_movimiento = $hd;
-        
-        $hd = "index.php?seccion=im_tipo_movimiento&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_tipo_movimiento = $hd;
-
-        $hd = "index.php?seccion=im_codigo_clase&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_codigo_clase = $hd;
-
-        $hd = "index.php?seccion=im_conf_pres_empresa&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_conf_pres_empresa = $hd;
-
-        $hd = "index.php?seccion=im_uma&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_uma = $hd;
-
-        $hd = "index.php?seccion=im_rcv&accion=lista&session_id=$this->session_id";
-        $this->link_lista_im_rcv = $hd;
-
-        $hd = "index.php?seccion=org_empresa&accion=lista&session_id=$this->session_id";
-        $this->link_lista_org_empresa = $hd;
-
-        $hd = "index.php?seccion=com_cliente&accion=lista&session_id=$this->session_id";
-        $this->link_lista_com_cliente = $hd;
-
-        $hd = "index.php?seccion=em_empleado&accion=lista&session_id=$this->session_id";
-        $this->link_lista_em_empleado = $hd;
-
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
+        $this->titulo_pagina = "Inicio";
+
 
         return $template;
     }
