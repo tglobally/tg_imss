@@ -18,6 +18,8 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
             print_r($error);
             die('Error');
         }
+        $this->titulo_accion = "Listado de Movimientos";
+
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -46,6 +48,8 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
             return $this->retorno_error(
                 mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
         }
+
+        $this->titulo_accion = "Alta Movimiento";
 
         return $r_alta;
     }
@@ -251,11 +255,15 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }
 
+        $this->titulo_accion = "Modifica Movimiento";
+
         return $r_modifica;
     }
 
     public function sube_archivo(bool $header, bool $ws = false)
     {
+        $this->titulo_accion = "Importar Registros";
+
         $r_alta = $this->init_alta();
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
