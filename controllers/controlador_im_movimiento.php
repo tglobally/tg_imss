@@ -20,6 +20,14 @@ class controlador_im_movimiento extends \gamboamartin\im_registro_patronal\contr
         }
         $this->titulo_accion = "Listado de Movimientos";
 
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta,
+            "importar_registros" => $this->link_im_movimiento_sube_archivo));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
+
     }
 
     public function alta(bool $header, bool $ws = false): array|string

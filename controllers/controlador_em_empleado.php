@@ -14,12 +14,14 @@ use PDO;
 use stdClass;
 use tglobally\template_tg\html;
 
-class controlador_em_empleado extends \gamboamartin\im_registro_patronal\controllers\controlador_em_empleado {
+class controlador_em_empleado extends \gamboamartin\empleado\controllers\controlador_em_empleado {
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
         $html_base = new html();
         parent::__construct(link: $link, html: $html_base);
+        $this->seccion_titulo = "Remunerados";
+        $this->titulo_accion = "Listado de Remunerados";
 
         $this->sidebar['lista']['titulo'] = "Remunerados";
         $this->sidebar['lista']['menu'] = array();
@@ -36,5 +38,27 @@ class controlador_em_empleado extends \gamboamartin\im_registro_patronal\control
 
         return $menu_item;
     }
+
+    protected function init_datatable(): stdClass
+    {
+        $columns["em_empleado_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["em_empleado_nss"]["titulo"] = "NSS";
+        $columns["org_puesto_descripcion"]["titulo"] = "Puesto";
+        $columns["em_empleado_n_cuentas_bancarias"]["titulo"] = "Cuentas Bancarias";
+
+        $filtro = array("em_empleado.id","em_empleado.nombre","em_empleado.ap","em_empleado.am","em_empleado.rfc",
+            "em_empleado_nombre_completo","em_empleado_nombre_completo_inv", "em_empleado.nss","org_puesto.descripcion");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
+    }
+
 
 }

@@ -13,6 +13,8 @@ class controlador_com_cliente extends \gamboamartin\comercial\controllers\contro
     {
         $html_base = new html();
         parent::__construct(link: $link, html: $html_base);
+        $this->seccion_titulo = "Clientes";
+        $this->titulo_accion = "Listado de Clientes";
 
         $this->sidebar['lista']['titulo'] = "Clientes";
         $this->sidebar['lista']['menu'] = array();
@@ -28,6 +30,25 @@ class controlador_com_cliente extends \gamboamartin\comercial\controllers\contro
         $menu_item['menu_lateral_active'] = $menu_lateral_active;
 
         return $menu_item;
+    }
+
+    protected function init_datatable(): stdClass
+    {
+        $columns["com_cliente_id"]["titulo"] = "Id";
+        $columns["com_cliente_codigo"]["titulo"] = "Código";
+        $columns["com_cliente_razon_social"]["titulo"] = "Razón Social";
+        $columns["com_cliente_rfc"]["titulo"] = "RFC";
+        $columns["cat_sat_regimen_fiscal_descripcion"]["titulo"] = "Régimen Fiscal";
+        $columns["com_cliente_n_sucursales"]["titulo"] = "Sucursales";
+
+        $filtro = array("com_cliente.id", "com_cliente.codigo", "com_cliente.razon_social", "com_cliente.rfc",
+            "cat_sat_regimen_fiscal.descripcion");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+        return $datatables;
     }
 
 

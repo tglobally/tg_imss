@@ -1,6 +1,7 @@
 <?php
 namespace tglobally\tg_imss\controllers;
 
+use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
@@ -13,6 +14,13 @@ class controlador_im_uma extends \gamboamartin\im_registro_patronal\controllers\
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
         $this->titulo_lista = 'Uma';
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
         $this->sidebar['lista']['titulo'] = "Uma";
         $this->sidebar['lista']['menu'] = array(
