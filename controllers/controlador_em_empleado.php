@@ -10,6 +10,7 @@ namespace tglobally\tg_imss\controllers;
 
 
 
+use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
@@ -58,6 +59,18 @@ class controlador_em_empleado extends \gamboamartin\empleado\controllers\control
         $datatables->menu_active = true;
 
         return $datatables;
+    }
+
+    public function modifica(bool $header, bool $ws = false, array $keys_selects =  array()): array|stdClass
+    {
+        $r_modifica = parent::modifica($header, $ws, $keys_selects);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_modifica, header: $header,ws:$ws);
+        }
+
+        $this->titulo_accion = "Modifica Remunerado";
+
+        return $r_modifica;
     }
 
 

@@ -52,4 +52,16 @@ class controlador_com_cliente extends \gamboamartin\comercial\controllers\contro
     }
 
 
+    public function modifica(bool $header, bool $ws = false, array $keys_selects =  array()): array|stdClass
+    {
+        $r_modifica = parent::modifica($header, $ws, $keys_selects);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_modifica, header: $header,ws:$ws);
+        }
+
+        $this->titulo_accion = "Modifica Cliente";
+
+        return $r_modifica;
+    }
+
 }
