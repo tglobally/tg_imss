@@ -22,6 +22,8 @@ class controlador_im_tipo_salario_minimo extends \gamboamartin\im_registro_patro
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
         $this->titulo_lista = 'Tipo Salario Minimo';
+        $this->seccion_titulo = "Tipo Salario Minimo";
+        $this->titulo_accion = "Listado de Tipos de Salario Minimo";
 
         $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
         if (errores::$error) {
@@ -61,6 +63,32 @@ class controlador_im_tipo_salario_minimo extends \gamboamartin\im_registro_patro
         }
         $this->menu_lateral = $menu_lateral;
     }
+    public function alta(bool $header, bool $ws = false): array|string
+    {
+        $r_alta = parent::alta($header, $ws);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_alta, header: $header,ws:$ws);
+        }
+
+        $this->titulo_accion = "Alta Tipo de Salario Mínimo";
+
+        return $r_alta;
+
+    }
+
+    public function modifica(bool $header, bool $ws = false): array|stdClass
+    {
+
+        $r_modifica = parent::modifica($header, $ws);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_modifica, header: $header,ws:$ws);
+        }
+
+        $this->titulo_accion = "Modifica Tipo de Salario Mínimo";
+
+        return $r_modifica;
+    }
+
 
     private function keys_rows_lista(): array
     {

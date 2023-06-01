@@ -16,8 +16,7 @@ class controlador_im_clase_riesgo extends \gamboamartin\im_registro_patronal\con
         parent::__construct(link: $link, html: $html_base);
         $this->seccion_titulo = "Clases de Riesgo";
         $this->titulo_lista = 'Clase Riesgo';
-
-        $this->titulo_accion = "Listado de Movimientos";
+        $this->titulo_accion = "Listado de Clases de Riesgo";
 
         $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
         if (errores::$error) {
