@@ -1,3 +1,5 @@
+<?php /** @var \tglobally\tg_imss\controllers\controlador_nom_nomina $controlador  controlador en ejecucion */ ?>
+
 <div class="accordion accordion-flush" id="accordionFlushExample">
     <div class="accordion-item">
         <h2 class="accordion-header" id="flush-headingOne">
@@ -36,7 +38,7 @@
 
                 <div class="row">
                     <div class="col-sm-6">
-
+                        <?php echo $controlador->inputs->select->tg_alianza_id; ?>
                     </div>
                     <div class="col-sm-6">
                         <div class="card-subtitle text-disabled">Reportes Ordinarios</div>
