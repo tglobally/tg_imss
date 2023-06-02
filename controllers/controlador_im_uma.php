@@ -14,6 +14,8 @@ class controlador_im_uma extends \gamboamartin\im_registro_patronal\controllers\
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
         $this->titulo_lista = 'Uma';
+        $this->seccion_titulo = "UMA";
+        $this->titulo_accion = "Listado UMA";
 
         $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
         if (errores::$error) {
