@@ -38,7 +38,12 @@
 
                 <div class="row">
                     <div class="col-sm-6">
-                        <?php echo $controlador->inputs->select->tg_alianza_id; ?>
+                        <?php echo $controlador->inputs->select->filtro_categoria; ?>
+                        <?php echo $controlador->inputs->select->em_registro_patronal_id; ?>
+                        <div class="col-sm-12">
+                            <label class="form-label">Rango de fechas:</label>
+                            <div data-coreui-locale="en-US" data-coreui-size="sm" data-coreui-toggle="date-range-picker"></div>
+                        </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="card-subtitle text-disabled">Reportes Ordinarios</div>

@@ -2,6 +2,8 @@
 
 namespace html;
 
+use gamboamartin\comercial\models\com_cliente;
+use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
 use gamboamartin\im_registro_patronal\models\im_clase_riesgo;
 use PDO;
@@ -14,8 +16,8 @@ class nom_nomina_html extends base_nominas
     {
         $controler->inputs = new stdClass();
         $controler->inputs->select = new stdClass();
-        $controler->inputs->select->tg_alianza_id = $inputs->selects->tg_alianza_id;
-
+        $controler->inputs->select->filtro_categoria = $inputs->selects->tg_alianza_id;
+        $controler->inputs->select->em_registro_patronal_id = $inputs->selects->em_registro_patronal_id;
         return $controler->inputs;
     }
 
@@ -53,27 +55,50 @@ class nom_nomina_html extends base_nominas
     {
         $selects = new stdClass();
 
-        $cols_im_org_puesto_id = $params->tg_alianza->cols ?? 12;
-
         $select = $this->select_tg_alianza(
-            cols: $cols_im_org_puesto_id, con_registros: true, id_selected: -1, link: $link, disabled: false);
+            cols: 12, con_registros: true, id_selected: -1, link: $link, disabled: false);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al generar select', data: $select);
         }
         $selects->tg_alianza_id = $select;
 
+        $select = $this->select_em_registro_patronal(
+            cols: 12, con_registros: true, id_selected: -1, link: $link, disabled: false);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar select', data: $select);
+        }
+        $selects->em_registro_patronal_id = $select;
+
         return $selects;
     }
 
     public function select_tg_alianza(int  $cols, bool $con_registros, int|null $id_selected,
-                                      PDO  $link, bool $disabled = false, string $label = "Alianza:",
+                                      PDO  $link, bool $disabled = false, string $label = "Cliente:",
                                       bool $required = false): array|string
     {
         if (is_null($id_selected)) {
             $id_selected = -1;
         }
 
-        $modelo = new im_clase_riesgo($link);
+        $modelo = new com_cliente($link);
+
+        $select = $this->select_catalogo(cols: $cols, con_registros: $con_registros, id_selected: $id_selected,
+            modelo: $modelo, disabled: $disabled, label: $label, required: $required);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar select', data: $select);
+        }
+        return $select;
+    }
+
+    public function select_em_registro_patronal(int  $cols, bool $con_registros, int|null $id_selected,
+                                      PDO  $link, bool $disabled = false, string $label = "Registro Patronal:",
+                                      bool $required = false): array|string
+    {
+        if (is_null($id_selected)) {
+            $id_selected = -1;
+        }
+
+        $modelo = new em_registro_patronal($link);
 
         $select = $this->select_catalogo(cols: $cols, con_registros: $con_registros, id_selected: $id_selected,
             modelo: $modelo, disabled: $disabled, label: $label, required: $required);
