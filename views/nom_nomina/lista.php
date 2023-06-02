@@ -14,24 +14,24 @@
                 <div class="card-title fs-6 fw-semibold">Seleccione una opción de busqueda:</div>
                 <div>
                     <div class="card-subtitle text-disabled">Seleccione una categoría</div>
-                    <div class="form-check form-check-inline">
+                    <!--<div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="categorias" id="radio-alianza"
-                               value="alianza" checked>
+                               value="tg_alianza" checked>
                         <label class="form-check-label" for="radio-alianza">Alianza</label>
-                    </div>
+                    </div>-->
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="categorias" id="radio-cliente"
-                               value="cliente">
+                               value="com_cliente" checked data-accion="get_cliente" data-titulo="Cliente:">
                         <label class="form-check-label" for="radio-cliente">Cliente</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="categorias" id="radio-empresa"
-                               value="empresa">
+                               value="org_empresa" data-accion="get_empresa" data-titulo="Empresa:">
                         <label class="form-check-label" for="radio-empresa">Empresa</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="categorias" id="radio-remunerado"
-                               value="remunerado">
+                               value="em_empleado" data-accion="get_empleado" data-titulo="Remunerado:">
                         <label class="form-check-label" for="radio-remunerado">Remunerado</label>
                     </div>
                 </div>
