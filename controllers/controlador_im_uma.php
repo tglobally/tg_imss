@@ -41,6 +41,32 @@ class controlador_im_uma extends \gamboamartin\im_registro_patronal\controllers\
 
     }
 
+    public function alta(bool $header, bool $ws = false): array|string
+    {
+        $r_alta = parent::alta($header, $ws);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_alta, header: $header,ws:$ws);
+        }
+
+        $this->titulo_accion = "Alta Uma";
+
+        return $r_alta;
+
+    }
+
+    public function modifica(bool $header, bool $ws = false, string $breadcrumbs = '', bool $aplica_form = true,
+                             bool $muestra_btn = true): array|stdClass
+    {
+        $r_modifica = parent::modifica($header, $ws, $breadcrumbs, $aplica_form, $muestra_btn);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_modifica, header: $header,ws:$ws);
+        }
+
+        $this->titulo_accion = "Modifica Uma";
+
+        return $r_modifica;
+    }
+
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false,bool $menu_lateral_active = false): array
     {
         $menu_item = array();
