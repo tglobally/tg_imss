@@ -1,22 +1,94 @@
 <?php
+
 namespace tglobally\tg_imss\controllers;
 
 use gamboamartin\errores\errores;
 
+use gamboamartin\system\datatables;
 use gamboamartin\system\system;
 use html\nom_nomina_html;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
 
-class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlador_nom_nomina {
+class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlador_nom_nomina
+{
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
-        parent::__construct(link: $link,paths_conf: $paths_conf);
+        parent::__construct(link: $link, paths_conf: $paths_conf);
         $this->seccion_titulo = "Nominas";
         $this->titulo_accion = "Listado de Nominas";
         $this->lista_get_data = true;
+
+        $datatables = $this->init_datatable();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar datatable', data: $datatables);
+            print_r($error);
+            die('Error');
+        }
+
+        $data_for_datable = (new datatables())->datatable_base_init(
+            datatables: $datatables,link: $this->link,rows_lista: $this->rows_lista,seccion: $this->seccion,
+            not_actions: $this->not_actions);
+        if(errores::$error){
+            $error = $this->errores->error(mensaje: 'Error al maquetar datos para tables ', data: $data_for_datable);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->datatables[0]['columns'] = array();
+        $this->datatables[0]['columns'][0] = new stdClass();
+        $this->datatables[0]['columns'][0]->title = "Id";
+        $this->datatables[0]['columns'][0]->data = "nom_nomina_id";
+
+        $this->datatables[0]['columns'][1] = new stdClass();
+        $this->datatables[0]['columns'][1]->title = "RFC";
+        $this->datatables[0]['columns'][1]->data = "em_empleado_rfc";
+
+        $this->datatables[0]['columns'][2] = new stdClass();
+        $this->datatables[0]['columns'][2]->title = "Nombre";
+        $this->datatables[0]['columns'][2]->data = "em_empleado_nombre";
+
+        $this->datatables[0]['columns'][3] = new stdClass();
+        $this->datatables[0]['columns'][3]->title = "AP";
+        $this->datatables[0]['columns'][3]->data = "em_empleado_ap";
+
+        $this->datatables[0]['columns'][4] = new stdClass();
+        $this->datatables[0]['columns'][4]->title = "AM";
+        $this->datatables[0]['columns'][4]->data = "em_empleado_am";
+
+        $this->datatables[0]['columnDefs'] = array();
+        $this->datatables[0]['columnDefs'][0] = new stdClass();
+        $this->datatables[0]['columnDefs'][0]->targets = 0;
+        $this->datatables[0]['columnDefs'][0]->data = null;
+        $this->datatables[0]['columnDefs'][0]->type = 'text';
+        $this->datatables[0]['columnDefs'][0]->rendered = Array ( 'nom_nomina_id' ) ;
+
+        $this->datatables[0]['columnDefs'][1] = new stdClass();
+        $this->datatables[0]['columnDefs'][1]->targets = 1;
+        $this->datatables[0]['columnDefs'][1]->data = null;
+        $this->datatables[0]['columnDefs'][1]->type = 'text';
+        $this->datatables[0]['columnDefs'][1]->rendered = Array ( 'em_empleado_rfc' ) ;
+
+        $this->datatables[0]['columnDefs'][2] = new stdClass();
+        $this->datatables[0]['columnDefs'][2]->targets = 2;
+        $this->datatables[0]['columnDefs'][2]->data = null;
+        $this->datatables[0]['columnDefs'][2]->type = 'text';
+        $this->datatables[0]['columnDefs'][2]->rendered = Array ( 'em_empleado_nombre' ) ;
+
+        $this->datatables[0]['columnDefs'][3] = new stdClass();
+        $this->datatables[0]['columnDefs'][3]->targets = 3;
+        $this->datatables[0]['columnDefs'][3]->data = null;
+        $this->datatables[0]['columnDefs'][3]->type = 'text';
+        $this->datatables[0]['columnDefs'][3]->rendered = Array ( 'em_empleado_ap' ) ;
+
+        $this->datatables[0]['columnDefs'][4] = new stdClass();
+        $this->datatables[0]['columnDefs'][4]->targets = 4;
+        $this->datatables[0]['columnDefs'][4]->data = null;
+        $this->datatables[0]['columnDefs'][4]->type = 'text';
+        $this->datatables[0]['columnDefs'][4]->rendered = Array ( 'em_empleado_am' ) ;
+
     }
 
     public function lista(bool $header, bool $ws = false): array
@@ -41,5 +113,20 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         return (array)$r_alta;
     }
 
+    protected function init_datatable(): stdClass
+    {
+        $columns = array();
+        $columns['nom_nomina_id']['titulo'] = 'Id';
+        $columns['em_empleado_rfc']['titulo'] = 'RFC';
 
+
+        $filtro = array("em_empleado.rfc", "em_empleado.nombres", "nom_nomina.fecha_inicial_pago", "nom_nomina.fecha_final_pago",
+            "nom_nomina.fecha_pago", "nom_periodo.codigo", "cat_sat_tipo_nomina.descripcion", "org_empresa.rfc");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+
+        return $datatables;
+    }
 }
