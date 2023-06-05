@@ -7,7 +7,6 @@ class Datatable {
         this.columns = columns;
         this.extra_columns = [];
         this.filtro = [];
-        2
     }
 
     init_datatable() {
@@ -36,11 +35,6 @@ class Datatable {
         this.extra_columns = extra_columns;
     }
 
-    existe(nuevoElemento) {
-        const existe = this.filtro.some(elemento => elemento.key === nuevoElemento.key);
-        return !existe;
-    }
-
     add_filter(filter) {
 
         const existe = this.filtro.findIndex(elemento => elemento.key === filter.key);
@@ -48,12 +42,12 @@ class Datatable {
         if (existe !== -1) {
             this.filtro[existe].valor = filter.valor;
         } else {
-            this.filtro.push([filter]);
+            this.filtro.push( filter );
         }
     }
 
     get instance() {
-        return this.datatable;
+        return this.datatable.draw();
     }
 }
 
@@ -100,11 +94,11 @@ sl_categoria.change(function () {
         var radio = $('[type=radio][name="categorias"]:checked');
 
         datatable_nominas.add_filter({
-            "key": radio.val(),
+            "key": radio.val()+".id",
             "valor": this.value,
         });
 
-        datatable_nominas.instance.draw();
+        datatable_nominas.instance;
     }
 });
 
