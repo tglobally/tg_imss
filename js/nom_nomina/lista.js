@@ -5,16 +5,51 @@ class Datatable {
         this.url = this.url.replace('.', '');
         this.url = get_url(this.url, "data_ajax", {});
         this.columns = columns;
+        this.extra_columns = [];
+        this.filtro = [];
+        2
     }
 
     init_datatable() {
+        const self = this;
+
         this.datatable = $(this.identificador).DataTable({
             processing: true,
             serverSide: true,
             responsive: true,
-            ajax: this.url,
-            columns: this.columns,
+            "deferRender": true,
+            ajax: {
+                url: this.url,
+                data: function (d) {
+                    d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
+                    d.filtros = {
+                        filtro: self.filtro
+                    }
+
+                }
+            },
+            columns: self.columns,
         });
+    }
+
+    add_columns(extra_columns) {
+        this.extra_columns = extra_columns;
+    }
+
+    existe(nuevoElemento) {
+        const existe = this.filtro.some(elemento => elemento.key === nuevoElemento.key);
+        return !existe;
+    }
+
+    add_filter(filter) {
+
+        const existe = this.filtro.findIndex(elemento => elemento.key === filter.key);
+
+        if (existe !== -1) {
+            this.filtro[existe].valor = filter.valor;
+        } else {
+            this.filtro.push([filter]);
+        }
     }
 
     get instance() {
@@ -52,10 +87,26 @@ const columns = [
 
 
 const datatable_nominas = new Datatable("#nom_nomina", columns);
+datatable_nominas.add_columns(["em_empleado_nombres", "em_empleado_ap", "em_empleado_am"]);
+
 datatable_nominas.init_datatable();
 
 
 let sl_categoria = $("#com_cliente_id");
+
+sl_categoria.change(function () {
+
+    if (this.value !== "" && this.value != -1) {
+        var radio = $('[type=radio][name="categorias"]:checked');
+
+        datatable_nominas.add_filter({
+            "key": radio.val(),
+            "valor": this.value,
+        });
+
+        datatable_nominas.instance.draw();
+    }
+});
 
 $('input[type=radio][name=categorias]').change(function () {
     var seccion = this.value;

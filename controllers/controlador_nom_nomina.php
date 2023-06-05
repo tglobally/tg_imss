@@ -89,6 +89,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $this->datatables[0]['columnDefs'][4]->type = 'text';
         $this->datatables[0]['columnDefs'][4]->rendered = Array ( 'em_empleado_am' ) ;
 
+        $this->datatables[0]['filtro'] = array();
+        $this->datatables[0]['filtro'] = $datatables->filtro;
     }
 
     public function lista(bool $header, bool $ws = false): array
@@ -120,8 +122,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $columns['em_empleado_rfc']['titulo'] = 'RFC';
 
 
-        $filtro = array("em_empleado.rfc", "em_empleado.nombres", "nom_nomina.fecha_inicial_pago", "nom_nomina.fecha_final_pago",
-            "nom_nomina.fecha_pago", "nom_periodo.codigo", "cat_sat_tipo_nomina.descripcion", "org_empresa.rfc");
+        $filtro = array("nom_nomina.id", "em_empleado.rfc", "em_empleado.nombres", "em_empleado.ap", "em_empleado.am",
+            "em_empleado.nombre_completo", "nom_nomina.fecha_pago", "org_empresa.descripcion");
 
         $datatables = new stdClass();
         $datatables->columns = $columns;
