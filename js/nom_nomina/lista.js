@@ -22,7 +22,16 @@ class Datatable {
                 data: function (d) {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
                     d.filtros = {
-                        filtro: self.filtro
+                        filtro: self.filtro,
+                        extra_join: [
+                            {
+                                "entidad": "tg_empleado_sucursal",
+                                "key": "em_empleado_id",
+                                "enlace": "em_empleado",
+                                "key_enlace": "id",
+                                "renombre": "tg_empleado_sucursal"
+                            },
+                        ]
                     }
 
                 }
@@ -86,6 +95,10 @@ const columns = [
     {
         title: 'Fecha Pago',
         data: 'nom_nomina_fecha_pago'
+    },
+    {
+        title: 'Cliente',
+        data: 'tg_empleado_sucursal_descripcion'
     },
     {
         title: 'Empresa',
