@@ -42,11 +42,26 @@ class Datatable {
         if (existe !== -1) {
             this.filtro[existe].valor = filter.valor;
         } else {
-            this.filtro.push( filter );
+            this.filtro.push(filter);
         }
     }
 
-    get instance() {
+    filter_isempty() {
+        return this.filtro.length === 0
+    }
+
+    filter_clear() {
+        this.filtro = [];
+    }
+
+    filter_reset() {
+        if (!this.filter_isempty()) {
+            this.filtro = [];
+            this.draw;
+        }
+    }
+
+    get draw() {
         return this.datatable.draw();
     }
 }
@@ -94,12 +109,13 @@ sl_categoria.change(function () {
         var radio = $('[type=radio][name="categorias"]:checked');
 
         datatable_nominas.add_filter({
-            "key": radio.val()+".id",
+            "key": radio.val() + ".id",
             "valor": this.value,
         });
-
-        datatable_nominas.instance;
+    } else {
+        datatable_nominas.filter_clear();
     }
+    datatable_nominas.draw;
 });
 
 $('input[type=radio][name=categorias]').change(function () {
@@ -110,4 +126,5 @@ $('input[type=radio][name=categorias]').change(function () {
     get_data2(seccion, accion, {}, sl_categoria);
     $('label[for=com_cliente_id]').html(titulo);
 
+    datatable_nominas.filter_reset();
 });
