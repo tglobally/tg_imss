@@ -129,19 +129,24 @@ datatable_nominas.init_datatable();
 
 
 let sl_categoria = $("#com_cliente_id");
-
+let sl_registro_patronal = $("#em_registro_patronal_id");
 sl_categoria.change(function () {
+    var seccion = $('[type=radio][name="categorias"]:checked').val();
 
     if (this.value !== "" && this.value != -1) {
-        var radio = $('[type=radio][name="categorias"]:checked');
-
         datatable_nominas.add_filter({
-            "key": radio.val() + ".id",
+            "key": seccion + ".id",
             "valor": this.value,
         });
     } else {
         datatable_nominas.filter_clear();
     }
+
+    if (seccion === "em_empleado") {
+        get_data2("em_registro_patronal", "get_registro_patronal", {em_registro_patronal_id: 1}, sl_registro_patronal);
+    }
+
+
     datatable_nominas.draw;
 });
 
@@ -149,8 +154,14 @@ $('input[type=radio][name=categorias]').change(function () {
     var seccion = this.value;
     var accion = $(this).data("accion");
     var titulo = $(this).data("titulo");
+    var extra_params = [];
 
-    get_data2(seccion, accion, {}, sl_categoria);
+    if (seccion === "em_empleado") {
+        extra_params = ["em_registro_patronal_id"];
+    }
+
+    get_data2(seccion, accion, {}, sl_categoria, extra_params);
+
     $('label[for=com_cliente_id]').html(titulo);
 
     datatable_nominas.filter_reset();
