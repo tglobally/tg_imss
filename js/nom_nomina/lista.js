@@ -123,32 +123,13 @@ const columns = [
 
 
 const datatable_nominas = new Datatable("#nom_nomina", columns);
-datatable_nominas.add_columns(["em_empleado_nombres", "em_empleado_ap", "em_empleado_am"]);
+datatable_nominas.add_columns(["em_empleado_nombres", "em_empleado_ap", "em_empleado_am", "em_registro_patronal_id"]);
 
 datatable_nominas.init_datatable();
 
 
 let sl_categoria = $("#com_cliente_id");
 let sl_registro_patronal = $("#em_registro_patronal_id");
-sl_categoria.change(function () {
-    var seccion = $('[type=radio][name="categorias"]:checked').val();
-
-    if (this.value !== "" && this.value != -1) {
-        datatable_nominas.add_filter({
-            "key": seccion + ".id",
-            "valor": this.value,
-        });
-    } else {
-        datatable_nominas.filter_clear();
-    }
-
-    if (seccion === "em_empleado") {
-        get_data2("em_registro_patronal", "get_registro_patronal", {em_registro_patronal_id: 1}, sl_registro_patronal);
-    }
-
-
-    datatable_nominas.draw;
-});
 
 $('input[type=radio][name=categorias]').change(function () {
     var seccion = this.value;
@@ -166,3 +147,34 @@ $('input[type=radio][name=categorias]').change(function () {
 
     datatable_nominas.filter_reset();
 });
+sl_categoria.change(function () {
+    var seccion = $('[type=radio][name="categorias"]:checked').val();
+
+    if (this.value !== "" && this.value != -1) {
+        datatable_nominas.add_filter({
+            "key": seccion + ".id",
+            "valor": this.value,
+        });
+
+    } else {
+        datatable_nominas.filter_clear();
+    }
+
+    datatable_nominas.draw;
+});
+
+sl_registro_patronal.change(function () {
+
+    if (this.value !== "" && this.value != -1) {
+        datatable_nominas.add_filter({
+            "key": "em_registro_patronal.id",
+            "valor": this.value,
+        });
+
+    } else {
+        datatable_nominas.filter_clear();
+    }
+
+    datatable_nominas.draw;
+});
+
