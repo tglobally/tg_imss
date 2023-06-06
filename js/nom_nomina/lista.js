@@ -31,6 +31,20 @@ class Datatable {
                                 "key_enlace": "id",
                                 "renombre": "tg_empleado_sucursal"
                             },
+                            {
+                                "entidad": "com_sucursal",
+                                "key": "id",
+                                "enlace": "tg_empleado_sucursal",
+                                "key_enlace": "com_sucursal_id",
+                                "renombre": "com_sucursal"
+                            },
+                            {
+                                "entidad": "com_cliente",
+                                "key": "id",
+                                "enlace": "com_sucursal",
+                                "key_enlace": "com_cliente_id",
+                                "renombre": "com_cliente"
+                            },
                         ]
                     }
 
@@ -98,7 +112,7 @@ const columns = [
     },
     {
         title: 'Cliente',
-        data: 'tg_empleado_sucursal_descripcion'
+        data: 'com_cliente_razon_social'
     },
     {
         title: 'Empresa',
