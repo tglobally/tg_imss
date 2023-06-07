@@ -131,4 +131,11 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
         return $datatables;
     }
+
+    public function exportar_nominas(bool $header, bool $ws = false): array|stdClass
+    {
+
+        header('Location:' . $this->link_lista);
+        exit;
+    }
 }
