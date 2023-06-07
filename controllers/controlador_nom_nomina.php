@@ -13,6 +13,7 @@ use tglobally\template_tg\html;
 
 class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlador_nom_nomina
 {
+    public string $link_nom_nomina_exportar_nominas = '';
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
@@ -24,6 +25,20 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $datatables = $this->init_datatable();
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al inicializar datatable', data: $datatables);
+            print_r($error);
+            die('Error');
+        }
+
+        $init_links = $this->init_links();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar links', data: $init_links);
+            print_r($error);
+            die('Error');
+        }
+
+        $acciones = $this->define_acciones_menu(acciones: array("Exportar Nominas" => $this->link_nom_nomina_exportar_nominas));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);
             die('Error');
         }
@@ -130,6 +145,26 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $datatables->filtro = $filtro;
 
         return $datatables;
+    }
+
+    private function init_links(): array|string
+    {
+        $links = $this->obj_link->genera_links(controler: $this);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al generar links', data: $links);
+            print_r($error);
+            exit;
+        }
+
+        $link = $this->obj_link->get_link(seccion: "nom_nomina", accion: "exportar_nominas");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link exportar_nominas', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_nom_nomina_exportar_nominas = $link;
+
+        return $link;
     }
 
     public function exportar_nominas(bool $header, bool $ws = false): array|stdClass
