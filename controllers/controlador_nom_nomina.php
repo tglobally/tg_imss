@@ -170,6 +170,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
     public function exportar_nominas(bool $header, bool $ws = false): array|stdClass
     {
 
+
         header('Location:' . $this->link_lista);
         exit;
     }

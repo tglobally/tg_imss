@@ -178,3 +178,23 @@ sl_registro_patronal.change(function () {
     datatable_nominas.draw;
 });
 
+$('a:contains("Exportar Nominas")').click(function(e) {
+    e.preventDefault();
+
+    var link = $(this).attr('href');
+
+    $.ajax({
+        url: link,
+        type: 'POST',
+        data: { parametro: 4 },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error en la solicitud:', status, error);
+        }
+    });
+});
+
+
+
