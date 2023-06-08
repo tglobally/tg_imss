@@ -181,12 +181,17 @@ sl_registro_patronal.change(function () {
 $('a:contains("Exportar Nominas")').click(function(e) {
     e.preventDefault();
 
+    var seccion = $('[type=radio][name="categorias"]:checked').val();
+    var categoria = sl_categoria.val();
+    var registro_patronal = sl_registro_patronal.val();
+
+    var data =  {"seccion": seccion, "categoria": categoria, "registro_patronal": registro_patronal};
     var link = $(this).attr('href');
 
     $.ajax({
         url: link,
         type: 'POST',
-        data: { parametro: 4 },
+        data: data,
         success: function(response) {
             console.log(response);
         },
