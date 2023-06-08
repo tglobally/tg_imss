@@ -10,6 +10,7 @@ use html\nom_nomina_html;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
+use tglobally\tg_nomina\models\nom_nomina;
 
 class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlador_nom_nomina
 {
@@ -170,20 +171,23 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
     public function exportar_nominas(bool $header, bool $ws = false): array|stdClass
     {
         $data = $_POST;
-        $seccion = '';
-        $registro_patronal = array();
+        $filtro = array();
 
-        if (isset($data['secciones']) && isset($data['categoria'])){
-            $seccion = $data['secciones'];
-            $categoria = $data['categoria'];
+        if (isset($data['seccion']) && isset($data['categoria']) && $data['seccion'] !== "" && $data['categoria'] !== ""){
+            $filtro[$data['seccion'].".id"] = $data['categoria'];
         }
 
-        if (isset($data['registro_patronal'])){
-            $seccion = $data['secciones'];
-            $registro_patronal = $data['registro_patronal'];
+        if (isset($data['registro_patronal']) && $data['registro_patronal'] !== ""){
+            $filtro["em_registro_patronal.id"] = $data['registro_patronal'];
         }
 
+        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas,
+                header: $header, ws: $ws);
+        }
 
+        print_r($nominas);
 
 
 
