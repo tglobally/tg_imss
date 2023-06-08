@@ -2,15 +2,28 @@
 
 namespace tglobally\tg_imss\controllers;
 
+use base\orm\modelo;
+use DateTime;
+use gamboamartin\cat_sat\models\cat_sat_isn;
+use gamboamartin\comercial\models\com_sucursal;
+use gamboamartin\direccion_postal\models\dp_calle_pertenece;
 use gamboamartin\errores\errores;
 
+use gamboamartin\facturacion\models\fc_cfdi_sellado;
+use gamboamartin\nomina\models\em_empleado;
+use gamboamartin\nomina\models\nom_par_deduccion;
+use gamboamartin\nomina\models\nom_par_otro_pago;
+use gamboamartin\nomina\models\nom_par_percepcion;
+use gamboamartin\plugins\exportador;
 use gamboamartin\system\datatables;
 use gamboamartin\system\system;
 use html\nom_nomina_html;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
+use tglobally\tg_nomina\controllers\Reporte_Template;
 use tglobally\tg_nomina\models\nom_nomina;
+use tglobally\tg_nomina\models\tg_manifiesto;
 
 class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlador_nom_nomina
 {
@@ -187,16 +200,326 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 header: $header, ws: $ws);
         }
 
+        $empresa = $manifiesto['org_sucursal_descripcion'] ?? "";
+
+        $fecha_inicio = date('d/m/Y');
+        $fecha_final = date('d/m/Y');
+
+        $registros = $this->fill_data(nominas: $nominas->registros, empresa: $empresa,
+            manifiesto_fecha_inicio: $fecha_inicio, manifiesto_fecha_fin: $fecha_final);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
+            print_r($error);
+            die('Error');
+        }
+
+
+        $periodo = "$fecha_inicio - $fecha_final";
+
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa, periodo: $periodo, remunerados: 0,
+            total_registros: 1, registros: $registros);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+            print_r($error);
+            die('Error');
+        }
+
+        $name = "REPORTE DE NOMINAS_$empresa";
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
+            data: $data, styles: Reporte_Template::REPORTE_NOMINA);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
         print_r($nominas);
 
-
-
-
-
-        print_r($_POST);exit();
+        exit();
 
 
         header('Location:' . $this->link_lista);
         exit;
+    }
+
+    private function maqueta_salida(string $empresa, string $periodo, int $remunerados, int $total_registros, array $registros): array
+    {
+        $tabla['detalles'] = [
+            ["titulo" => 'EMPRESA:', 'valor' => $empresa],
+            ["titulo" => 'PERIODO:', 'valor' => $periodo],
+            ["titulo" => '# REMUNERADOS:', 'valor' => $remunerados],
+            ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
+        ];
+
+        $tabla['headers'] = ['FOLIO NÓMINA', 'ID REM', 'NOMBRE', 'RFC', 'NSS', 'REGISTRO PATRONAL', 'UBICACIÓN RP', 'EMPRESA',
+            'UBICACIÓN TRABAJADOR', 'MES', 'PERIODO DE PAGO', 'FOLIO FISCAL IMSS', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO',
+            'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA', 'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS',
+            'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
+            'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'TOTAL PERCEPCIONES', 'BASE GRAVABLE', 'RETENCION ISR',
+            'RETENCION IMSS', 'INFONAVIT', 'FONACOT', 'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR ',
+            'TOTAL DEDUCCIONES', 'NETO IMSS', 'NETO HABERES', 'BASE ISN', 'TASA ISN', 'IMPORTE ISN', 'CLIENTE'];
+        $tabla['data'] = $registros;
+        $tabla['startRow'] = 5;
+        $tabla['startColumn'] = "A";
+
+        $tabla2['headers'] = ['PRIMA VACACIONAL (15 UMAS)', 'GRATIFICACION ( 30 UMAS )', 'AGUINALDO ( 15 UMAS )',
+            'DIA FESTIVO', 'DESCANSO LABORADO', 'HORAS EXTRAS ( 5 UMAS POR SEMANA)'];
+        $tabla2['mergeheaders'] = array('PRIMA VACACIONAL (15 UMAS)' => 2, 'GRATIFICACION ( 30 UMAS )' => 2,
+            'AGUINALDO ( 15 UMAS )' => 2, 'DIA FESTIVO' => 2, 'DESCANSO LABORADO' => 2,
+            'HORAS EXTRAS ( 5 UMAS POR SEMANA)' => 2);
+        $tabla2['data'] = array();
+        $tabla2['startRow'] = 4;
+        $tabla2['startColumn'] = "Z";
+
+
+        return array($tabla2, $tabla);
+    }
+
+
+    private function fill_data(array $nominas, string $empresa, string $manifiesto_fecha_inicio, string $manifiesto_fecha_fin): array
+    {
+        $meses = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE',
+            'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
+
+        $registros = array();
+        $total_deducciones = 0;
+        $total_percepciones = 0;
+        $total_otros_ingresos = 0;
+        $total_otros_descuentos = 0;
+
+        foreach ($nominas as $nomina) {
+            $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener el estado', data: $org_sucursal_estado);
+            }
+
+            $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id']);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener el estado', data: $em_empleado_estado);
+            }
+
+            $timbrado = (new fc_cfdi_sellado($this->link))->filtro_and(filtro: array("fc_factura_id" => $nomina['fc_factura_id']), limit: 1);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener cfdi sellado', data: $timbrado);
+            }
+
+            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id']);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
+            }
+
+            $campos['subsidio'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Subsidio');
+            $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Dominical');
+            $campos['vacaciones'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Vacaciones');
+            $campos['septimo_dia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Septimo Dia');
+            $campos['compensacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Compensacion');
+            $campos['despensa'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Despensa');
+            $campos['otros_ingresos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Otros Ingresos');
+            $campos['devolucion_infonavit'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Devolucion Infonavit');
+            $campos['prima_vacacional'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Vacacional');
+            $campos['gratificacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Gratificacion');
+            $campos['aguinaldo'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Aguinaldo');
+            $campos['dia_festivo'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Dia Festivo Laborado');
+            $campos['dia_descanso'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Dia de Descanso');
+            $campos['horas_extras'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "cat_sat_tipo_percepcion_nom.descripcion" => 'Horas extras');
+
+            $percepciones = $this->get_totales(entidad: new nom_par_percepcion($this->link), campos: $campos);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener totales de percepciones', data: $percepciones);
+            }
+
+            $campos_deduccion['infonavit'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'INFONAVIT');
+
+            $campos_deduccion['isr'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'ISR');
+
+            $campos_deduccion['imss'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'IMSS');
+
+            $campos_deduccion['fonacot'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'FONACOT');
+
+            $campos_deduccion['pension_alimenticia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'PENSION ALIMENTICIA');
+
+            $campos_deduccion['otros_descuentos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'Otros Descuentos');
+
+            $campos_deduccion['descuento_comedor'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR');
+
+            $deducciones = $this->get_totales(entidad: new nom_par_deduccion($this->link), campos: $campos_deduccion);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener totales de deducciones', data: $deducciones);
+            }
+
+
+            $campos_otro_pago['subsidios'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'activo');
+            $campos_otro_pago['otros_ingresos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'inactivo');
+            $otros_pagos = $this->get_totales(entidad: new nom_par_otro_pago($this->link), campos: $campos_otro_pago);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener totales de otros pagos', data: $otros_pagos);
+            }
+
+            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($manifiesto_fecha_inicio)));
+            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($manifiesto_fecha_fin)));
+
+            $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
+
+            $sueldo = ($fecha_inicio->diff($fecha_final))->days * $nomina['em_empleado_salario_diario'];
+
+            $percepciones['total'] += $sueldo + $otros_pagos['subsidios']['total'];
+
+            $base_gravable = $sueldo + $percepciones['vacaciones']['total'] + $percepciones['septimo_dia']['total'] +
+                $percepciones['compensacion']['total'] + $percepciones['despensa']['total'] +
+                $otros_pagos['otros_ingresos']['total'] + $percepciones['prima_vacacional']['gravado'] +
+                $percepciones['gratificacion']['gravado'] + $percepciones['aguinaldo']['gravado'] +
+                $percepciones['dia_festivo']['gravado'] + $percepciones['dia_descanso']['gravado'] +
+                $percepciones['horas_extras']['gravado'];
+
+            $neto_imss = $percepciones['total'] - $deducciones['total'];
+
+            $base_isn = $percepciones['total'] - $otros_pagos['subsidios']['total'];
+
+            $cat_sat_isn = (new cat_sat_isn($this->link))->registro(registro_id: $nomina['em_registro_patronal_cat_sat_isn_id'],
+                columnas: array("cat_sat_isn_porcentaje"));
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener cat_sat_isn', data: $cat_sat_isn);
+            }
+
+            $tasa_isn = $cat_sat_isn['cat_sat_isn_porcentaje'] / 100;
+            $importe_isn = $base_isn * $tasa_isn;
+            $cliente = $cliente_nomina['com_sucursal_descripcion'];
+
+            $uuid = "";
+
+            if ($timbrado->n_registros > 0) {
+                $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
+            }
+
+            $fi = (new em_empleado($this->link))->obten_factor(em_empleado_id: $nomina['em_empleado_id'],
+                fecha_inicio_rel: $nomina['em_empleado_fecha_inicio_rel_laboral']);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener factor de ingracion', data: $fi);
+            }
+
+            $registro = [
+                $nomina['fc_factura_folio'],
+                $nomina['em_empleado_id'],
+                $nomina['em_empleado_ap'] . ' ' . $nomina['em_empleado_am'] . ' ' . $nomina['em_empleado_nombre'],
+                $nomina['em_empleado_rfc'],
+                $nomina['em_empleado_nss'],
+                $nomina['em_registro_patronal_descripcion'],
+                $org_sucursal_estado['dp_estado_descripcion'],
+                $empresa,
+                $em_empleado_estado['dp_estado_descripcion'],
+                $meses[$fecha_inicio->format('n') - 1],
+                $periodo,
+                $uuid,
+                (!empty($uuid)) ? 'TIMBRADO' : '',
+                $nomina['em_empleado_salario_diario'],
+                $fi,
+                $nomina['em_empleado_salario_diario_integrado'],
+                $sueldo,
+                $percepciones['subsidio']['total'],
+                $percepciones['prima_dominical']['total'],
+                $percepciones['vacaciones']['total'],
+                $percepciones['septimo_dia']['total'],
+                $percepciones['compensacion']['total'],
+                $percepciones['despensa']['total'],
+                $percepciones['otros_ingresos']['total'],
+                $percepciones['devolucion_infonavit']['total'],
+                $percepciones['prima_vacacional']['gravado'],
+                $percepciones['prima_vacacional']['exento'],
+                $percepciones['gratificacion']['gravado'],
+                $percepciones['gratificacion']['exento'],
+                $percepciones['aguinaldo']['gravado'],
+                $percepciones['aguinaldo']['exento'],
+                $percepciones['dia_festivo']['gravado'],
+                $percepciones['dia_festivo']['exento'],
+                $percepciones['dia_descanso']['gravado'],
+                $percepciones['dia_descanso']['exento'],
+                $percepciones['horas_extras']['gravado'],
+                $percepciones['horas_extras']['exento'],
+                $percepciones['total'],
+                $base_gravable,
+                $deducciones['isr']['total'],
+                $deducciones['imss']['total'],
+                $deducciones['infonavit']['total'],
+                $deducciones['fonacot']['total'],
+                $deducciones['pension_alimenticia']['total'],
+                $deducciones['otros_descuentos']['total'],
+                $deducciones['descuento_comedor']['total'],
+                $deducciones['total'],
+                $neto_imss,
+                "POR REVISAR",
+                $base_isn,
+                $tasa_isn,
+                $importe_isn,
+                $cliente
+            ];
+            $registros[] = $registro;
+
+            $total_deducciones += $deducciones['total'];
+            $total_percepciones += $percepciones['total'];
+            $total_otros_ingresos += $percepciones['otros_ingresos']['total'];
+            $total_otros_descuentos += $deducciones['otros_descuentos']['total'];
+        }
+
+        $totales = array_fill(0, '53', '');
+        $totales[23] = $total_otros_ingresos;
+        $totales[37] = $total_percepciones;
+        $totales[44] = $total_otros_descuentos;
+        $totales[46] = $total_deducciones;
+
+        $registros[] = $totales;
+
+        return $registros;
+    }
+
+    private function get_totales(modelo $entidad, array $campos): array
+    {
+        $salida = array();
+        $salida['total'] = 0;
+
+        foreach ($campos as $key => $data) {
+            $gravado = $entidad->suma(campos: array("gravado" => "$entidad->tabla.importe_gravado"), filtro: $data);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: "Error al obtener $entidad->tabla de la nomina - $key", data: $gravado);
+            }
+
+            $exento = (new $entidad($this->link))->suma(campos: array("exento" => "$entidad->tabla.importe_exento"), filtro: $data);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: "Error al obtener $entidad->tabla de la nomina - $key", data: $exento);
+            }
+
+            $salida[$key] = array("gravado" => $gravado["gravado"],
+                "exento" => $exento["exento"],
+                "total" => $gravado["gravado"] + $exento["exento"]);
+            $salida['total'] += $salida[$key]["total"];
+        }
+
+        return $salida;
     }
 }
