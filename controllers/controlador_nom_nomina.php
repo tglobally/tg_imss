@@ -169,6 +169,25 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
     public function exportar_nominas(bool $header, bool $ws = false): array|stdClass
     {
+        $data = $_POST;
+        $seccion = '';
+        $registro_patronal = array();
+
+        if (isset($data['secciones']) && isset($data['categoria'])){
+            $seccion = $data['secciones'];
+            $categoria = $data['categoria'];
+        }
+
+        if (isset($data['registro_patronal'])){
+            $seccion = $data['secciones'];
+            $registro_patronal = $data['registro_patronal'];
+        }
+
+
+
+
+
+
 
         print_r($_POST);exit();
 
