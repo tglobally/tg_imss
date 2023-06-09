@@ -58,9 +58,9 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         }
 
         $data_for_datable = (new datatables())->datatable_base_init(
-            datatables: $datatables,link: $this->link,rows_lista: $this->rows_lista,seccion: $this->seccion,
+            datatables: $datatables, link: $this->link, rows_lista: $this->rows_lista, seccion: $this->seccion,
             not_actions: $this->not_actions);
-        if(errores::$error){
+        if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar datos para tables ', data: $data_for_datable);
             print_r($error);
             die('Error');
@@ -92,31 +92,31 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $this->datatables[0]['columnDefs'][0]->targets = 0;
         $this->datatables[0]['columnDefs'][0]->data = null;
         $this->datatables[0]['columnDefs'][0]->type = 'text';
-        $this->datatables[0]['columnDefs'][0]->rendered = Array ( 'nom_nomina_id' ) ;
+        $this->datatables[0]['columnDefs'][0]->rendered = array('nom_nomina_id');
 
         $this->datatables[0]['columnDefs'][1] = new stdClass();
         $this->datatables[0]['columnDefs'][1]->targets = 1;
         $this->datatables[0]['columnDefs'][1]->data = null;
         $this->datatables[0]['columnDefs'][1]->type = 'text';
-        $this->datatables[0]['columnDefs'][1]->rendered = Array ( 'em_empleado_rfc' ) ;
+        $this->datatables[0]['columnDefs'][1]->rendered = array('em_empleado_rfc');
 
         $this->datatables[0]['columnDefs'][2] = new stdClass();
         $this->datatables[0]['columnDefs'][2]->targets = 2;
         $this->datatables[0]['columnDefs'][2]->data = null;
         $this->datatables[0]['columnDefs'][2]->type = 'text';
-        $this->datatables[0]['columnDefs'][2]->rendered = Array ( 'em_empleado_nombre' ) ;
+        $this->datatables[0]['columnDefs'][2]->rendered = array('em_empleado_nombre');
 
         $this->datatables[0]['columnDefs'][3] = new stdClass();
         $this->datatables[0]['columnDefs'][3]->targets = 3;
         $this->datatables[0]['columnDefs'][3]->data = null;
         $this->datatables[0]['columnDefs'][3]->type = 'text';
-        $this->datatables[0]['columnDefs'][3]->rendered = Array ( 'em_empleado_ap' ) ;
+        $this->datatables[0]['columnDefs'][3]->rendered = array('em_empleado_ap');
 
         $this->datatables[0]['columnDefs'][4] = new stdClass();
         $this->datatables[0]['columnDefs'][4]->targets = 4;
         $this->datatables[0]['columnDefs'][4]->data = null;
         $this->datatables[0]['columnDefs'][4]->type = 'text';
-        $this->datatables[0]['columnDefs'][4]->rendered = Array ( 'em_empleado_am' ) ;
+        $this->datatables[0]['columnDefs'][4]->rendered = array('em_empleado_am');
 
         $this->datatables[0]['filtro'] = array();
         $this->datatables[0]['filtro'] = $datatables->filtro;
@@ -183,40 +183,44 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
     public function exportar_nominas(bool $header, bool $ws = false): array|stdClass
     {
-        $data = $_POST;
+        $datos = $_POST;
         $filtro = array();
+        $categoria = "";
+        $fecha_inicio = date('d/m/Y', strtotime("01-01-2000"));
+        $fecha_final = date('d/m/Y', strtotime("01-01-2000"));
 
-        if (isset($data['seccion']) && isset($data['categoria']) && $data['seccion'] !== "" && $data['categoria'] !== ""){
-            $filtro[$data['seccion'].".id"] = $data['categoria'];
+        if (isset($datos['categorias']) && isset($datos['categoria_id']) && $datos['categorias'] !== "" && $datos['categoria_id'] !== "") {
+            $filtro[$datos['categorias'] . ".id"] = $datos['categoria_id'];
+            $categoria = $datos['categorias'];
         }
 
-        if (isset($data['registro_patronal']) && $data['registro_patronal'] !== ""){
-            $filtro["em_registro_patronal.id"] = $data['registro_patronal'];
+        if (isset($datos['registro_patronal']) && $datos['registro_patronal'] !== "") {
+            $filtro["em_registro_patronal.id"] = $datos['registro_patronal'];
+        }
+
+        if (isset($datos['fecha_inicio']) && $datos['fecha_inicio'] !== "") {
+            $fecha_inicio = date('d/m/Y', strtotime($datos['fecha_inicio']));
+        }
+
+        if (isset($datos['fecha_final']) && $datos['fecha_final'] !== "") {
+            $fecha_final = date('d/m/Y', strtotime($datos['fecha_final']));
         }
 
         $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas,
-                header: $header, ws: $ws);
+            return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas, header: $header, ws: $ws);
         }
 
-        $empresa = $manifiesto['org_sucursal_descripcion'] ?? "";
-
-        $fecha_inicio = date('d/m/Y');
-        $fecha_final = date('d/m/Y');
-
-        $registros = $this->fill_data(nominas: $nominas->registros, empresa: $empresa,
-            manifiesto_fecha_inicio: $fecha_inicio, manifiesto_fecha_fin: $fecha_final);
+        $registros = $this->fill_data(nominas: $nominas->registros,fecha_inicio: $fecha_inicio, fecha_fin: $fecha_final);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
             print_r($error);
             die('Error');
         }
 
-
         $periodo = "$fecha_inicio - $fecha_final";
 
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa, periodo: $periodo, remunerados: 0,
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(categoria: $categoria, periodo: $periodo, remunerados: 0,
             total_registros: 1, registros: $registros);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
@@ -224,7 +228,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             die('Error');
         }
 
-        $name = "REPORTE DE NOMINAS_$empresa";
+        $name = "REPORTE DE NOMINAS_$categoria";
 
         $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
             data: $data, styles: Reporte_Template::REPORTE_NOMINA);
@@ -237,8 +241,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             die('Error');
         }
 
-        print_r($nominas);
 
+        print_r($data);
         exit();
 
 
@@ -246,10 +250,10 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         exit;
     }
 
-    private function maqueta_salida(string $empresa, string $periodo, int $remunerados, int $total_registros, array $registros): array
+    private function maqueta_salida(string $categoria, string $periodo, int $remunerados, int $total_registros, array $registros): array
     {
         $tabla['detalles'] = [
-            ["titulo" => 'EMPRESA:', 'valor' => $empresa],
+            ["titulo" => 'EMPRESA:', 'valor' => $categoria],
             ["titulo" => 'PERIODO:', 'valor' => $periodo],
             ["titulo" => '# REMUNERADOS:', 'valor' => $remunerados],
             ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
@@ -280,7 +284,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
     }
 
 
-    private function fill_data(array $nominas, string $empresa, string $manifiesto_fecha_inicio, string $manifiesto_fecha_fin): array
+    private function fill_data(array $nominas, string $fecha_inicio, string $fecha_fin): array
     {
         $meses = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE',
             'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
@@ -382,12 +386,11 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 return $this->errores->error(mensaje: 'Error al obtener totales de otros pagos', data: $otros_pagos);
             }
 
-            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($manifiesto_fecha_inicio)));
-            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($manifiesto_fecha_fin)));
 
-            $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
 
-            $sueldo = ($fecha_inicio->diff($fecha_final))->days * $nomina['em_empleado_salario_diario'];
+            $periodo = "PERIODO";
+
+            $sueldo = 1;
 
             $percepciones['total'] += $sueldo + $otros_pagos['subsidios']['total'];
 
@@ -432,9 +435,9 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 $nomina['em_empleado_nss'],
                 $nomina['em_registro_patronal_descripcion'],
                 $org_sucursal_estado['dp_estado_descripcion'],
-                $empresa,
+                "empresa",
                 $em_empleado_estado['dp_estado_descripcion'],
-                $meses[$fecha_inicio->format('n') - 1],
+                $meses[1],
                 $periodo,
                 $uuid,
                 (!empty($uuid)) ? 'TIMBRADO' : '',

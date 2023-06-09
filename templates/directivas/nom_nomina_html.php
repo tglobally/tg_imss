@@ -83,7 +83,7 @@ class nom_nomina_html extends base_nominas
         $modelo = new com_cliente($link);
 
         $select = $this->select_catalogo(cols: $cols, con_registros: $con_registros, id_selected: $id_selected,
-            modelo: $modelo, disabled: $disabled, label: $label, required: $required);
+            modelo: $modelo, disabled: $disabled, label: $label, name: "categoria_id", required: $required);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al generar select', data: $select);
         }

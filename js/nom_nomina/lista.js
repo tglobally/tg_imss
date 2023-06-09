@@ -128,7 +128,7 @@ datatable_nominas.add_columns(["em_empleado_nombres", "em_empleado_ap", "em_empl
 datatable_nominas.init_datatable();
 
 
-let sl_categoria = $("#com_cliente_id");
+let sl_categoria = $("#categoria_id");
 let sl_registro_patronal = $("#em_registro_patronal_id");
 
 $('input[type=radio][name=categorias]').change(function () {
@@ -178,6 +178,7 @@ sl_registro_patronal.change(function () {
     datatable_nominas.draw;
 });
 
+/*
 $('a:contains("Exportar Nominas")').click(function(e) {
     e.preventDefault();
 
@@ -200,6 +201,7 @@ $('a:contains("Exportar Nominas")').click(function(e) {
         }
     });
 });
+*/
 
 
 
