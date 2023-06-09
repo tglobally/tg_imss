@@ -185,6 +185,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
     {
         $datos = $_POST;
         $filtro = array();
+        $extra_join = array();
         $categoria = "";
         $fecha_inicio = date('d/m/Y', strtotime("01-01-2000"));
         $fecha_final = date('d/m/Y', strtotime("01-01-2000"));
@@ -192,6 +193,23 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         if (isset($datos['categorias']) && isset($datos['categoria_id']) && $datos['categorias'] !== "" && $datos['categoria_id'] !== "") {
             $filtro[$datos['categorias'] . ".id"] = $datos['categoria_id'];
             $categoria = $datos['categorias'];
+
+            if ($datos['categorias'] === "com_cliente") {
+                $extra_join["tg_empleado_sucursal"]['key'] = "em_empleado_id";
+                $extra_join["tg_empleado_sucursal"]['enlace'] = "em_empleado";
+                $extra_join["tg_empleado_sucursal"]['key_enlace'] = "id";
+                $extra_join["tg_empleado_sucursal"]['renombre'] = "tg_empleado_sucursal";
+
+                $extra_join["com_sucursal"]['key'] = "id";
+                $extra_join["com_sucursal"]['enlace'] = "tg_empleado_sucursal";
+                $extra_join["com_sucursal"]['key_enlace'] = "com_sucursal_id";
+                $extra_join["com_sucursal"]['renombre'] = "com_sucursal";
+
+                $extra_join["com_cliente"]['key'] = "id";
+                $extra_join["com_cliente"]['enlace'] = "com_sucursal";
+                $extra_join["com_cliente"]['key_enlace'] = "com_cliente_id";
+                $extra_join["com_cliente"]['renombre'] = "com_cliente";
+            }
         }
 
         if (isset($datos['registro_patronal']) && $datos['registro_patronal'] !== "") {
@@ -206,21 +224,41 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             $fecha_final = date('d/m/Y', strtotime($datos['fecha_final']));
         }
 
-        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro);
+        $nominas = (new nom_nomina($this->link))->filtro_and(extra_join: $extra_join, filtro: $filtro);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas, header: $header, ws: $ws);
         }
 
-        $registros = $this->fill_data(nominas: $nominas->registros,fecha_inicio: $fecha_inicio, fecha_fin: $fecha_final);
+        $registros = $this->fill_data(nominas: $nominas->registros, fecha_inicio: $fecha_inicio, fecha_fin: $fecha_final);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
             print_r($error);
             die('Error');
         }
 
+
+        $categoria_value = "";
+
+        if ($categoria !== "") {
+            switch ($categoria) {
+                case "em_empleado":
+                    $categoria = "EMPLEADO";
+                    $categoria_value = $nominas->registros[0]["em_empleado_nombre_completo"];
+                    break;
+                case "org_empresa":
+                    $categoria = "EMPRESA";
+                    $categoria_value = $nominas->registros[0]["org_empresa_razon_social"];
+                    break;
+                case "com_cliente":
+                    $categoria = "CLIENTE";
+                    $categoria_value = $nominas->registros[0]["com_cliente_razon_social"];
+                    break;
+            }
+        }
+
         $periodo = "$fecha_inicio - $fecha_final";
 
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(categoria: $categoria, periodo: $periodo, remunerados: 0,
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(categoria: $categoria, categoria_value: $categoria_value, periodo: $periodo, remunerados: 0,
             total_registros: 1, registros: $registros);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
@@ -250,10 +288,11 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         exit;
     }
 
-    private function maqueta_salida(string $categoria, string $periodo, int $remunerados, int $total_registros, array $registros): array
+    private function maqueta_salida(string $categoria, string $categoria_value, string $periodo, int $remunerados,
+                                    int    $total_registros, array $registros): array
     {
         $tabla['detalles'] = [
-            ["titulo" => 'EMPRESA:', 'valor' => $categoria],
+            ["titulo" => $categoria, 'valor' => $categoria_value],
             ["titulo" => 'PERIODO:', 'valor' => $periodo],
             ["titulo" => '# REMUNERADOS:', 'valor' => $remunerados],
             ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
@@ -387,7 +426,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             }
 
 
-
             $periodo = "PERIODO";
 
             $sueldo = 1;
@@ -426,6 +464,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener factor de ingracion', data: $fi);
             }
+
+
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -488,7 +528,10 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             $total_percepciones += $percepciones['total'];
             $total_otros_ingresos += $percepciones['otros_ingresos']['total'];
             $total_otros_descuentos += $deducciones['otros_descuentos']['total'];
+
+
         }
+
 
         $totales = array_fill(0, '53', '');
         $totales[23] = $total_otros_ingresos;
