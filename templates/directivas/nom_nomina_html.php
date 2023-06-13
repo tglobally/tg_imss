@@ -5,7 +5,6 @@ namespace html;
 use gamboamartin\comercial\models\com_cliente;
 use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
-use gamboamartin\im_registro_patronal\models\im_clase_riesgo;
 use PDO;
 use stdClass;
 use tglobally\tg_imss\controllers\controlador_nom_nomina;
@@ -16,8 +15,11 @@ class nom_nomina_html extends base_nominas
     {
         $controler->inputs = new stdClass();
         $controler->inputs->select = new stdClass();
+        $controler->inputs->text = new stdClass();
         $controler->inputs->select->filtro_categoria = $inputs->selects->tg_alianza_id;
         $controler->inputs->select->em_registro_patronal_id = $inputs->selects->em_registro_patronal_id;
+        $controler->inputs->text->fecha_inicio = $inputs->text->fecha_inicio;
+        $controler->inputs->text->fecha_final = $inputs->text->fecha_final;
         return $controler->inputs;
     }
 
@@ -45,8 +47,14 @@ class nom_nomina_html extends base_nominas
             return $this->error->error(mensaje: 'Error al generar selects', data: $selects);
         }
 
+        $text = $this->text(row_upd: new stdClass());
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar selects', data: $selects);
+        }
+
         $alta_inputs = new stdClass();
         $alta_inputs->selects = $selects;
+        $alta_inputs->text = $text;
 
         return $alta_inputs;
     }
@@ -106,6 +114,64 @@ class nom_nomina_html extends base_nominas
             return $this->error->error(mensaje: 'Error al generar select', data: $select);
         }
         return $select;
+    }
+
+    private function text(stdClass $row_upd):
+    array|stdClass
+    {
+        $texts = new stdClass();
+
+        $fecha_inicio = $this->input_fecha_inicio(cols: 12, row_upd: $row_upd, value_vacio: false);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar input', data: $fecha_inicio);
+        }
+        $texts->fecha_inicio = $fecha_inicio;
+
+        $fecha_final = $this->input_fecha_final(cols: 12, row_upd: $row_upd, value_vacio: false);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar input', data: $fecha_final);
+        }
+        $texts->fecha_final = $fecha_final;
+
+        return $texts;
+    }
+
+    public function input_fecha_inicio(int $cols, stdClass $row_upd, bool $value_vacio, bool $disabled = false):
+    array|string
+    {
+        $valida = $this->directivas->valida_cols(cols: $cols);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar columnas', data: $valida);
+        }
+
+        $html = $this->directivas->fecha(disabled: $disabled, name: 'fecha_inicio', place_holder: 'Fecha Inicio', required: false,
+            row_upd: $row_upd, value_vacio: $value_vacio);
+
+        $div = $this->directivas->html->div_group(cols: $cols, html: $html);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al integrar div', data: $div);
+        }
+
+        return $div;
+    }
+
+    public function input_fecha_final(int $cols, stdClass $row_upd, bool $value_vacio, bool $disabled = false):
+    array|string
+    {
+        $valida = $this->directivas->valida_cols(cols: $cols);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar columnas', data: $valida);
+        }
+
+        $html = $this->directivas->fecha(disabled: $disabled, name: 'fecha_final', place_holder: 'Fecha Final', required: false,
+            row_upd: $row_upd, value_vacio: $value_vacio);
+
+        $div = $this->directivas->html->div_group(cols: $cols, html: $html);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al integrar div', data: $div);
+        }
+
+        return $div;
     }
 
 
