@@ -186,6 +186,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $datos = $_POST;
         $filtro = array();
         $extra_join = array();
+        $filtro_rango = array();
+
         $categoria = "";
         $fecha_inicio = date('d/m/Y', strtotime("01-01-2000"));
         $fecha_final = date('d/m/Y', strtotime("01-01-2000"));
@@ -222,9 +224,10 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
         if (isset($datos['fecha_final']) && $datos['fecha_final'] !== "") {
             $fecha_final = date('d/m/Y', strtotime($datos['fecha_final']));
+            $filtro_rango['nom_nomina.fecha_pago'] = ['valor1' => $datos['fecha_inicio'], 'valor2' => $datos['fecha_final']];
         }
 
-        $nominas = (new nom_nomina($this->link))->filtro_and(extra_join: $extra_join, filtro: $filtro);
+        $nominas = (new nom_nomina($this->link))->filtro_and(extra_join: $extra_join, filtro: $filtro,filtro_rango: $filtro_rango);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas, header: $header, ws: $ws);
         }
