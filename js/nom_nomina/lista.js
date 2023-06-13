@@ -7,6 +7,7 @@ class Datatable {
         this.columns = columns;
         this.extra_columns = [];
         this.filtro = [];
+        this.filtro_especial = [];
     }
 
     init_datatable() {
@@ -23,6 +24,7 @@ class Datatable {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
                     d.filtros = {
                         filtro: self.filtro,
+                        filtro_especial: self.filtro_especial,
                         extra_join: [
                             {
                                 "entidad": "tg_empleado_sucursal",
@@ -69,12 +71,21 @@ class Datatable {
         }
     }
 
+    add_filtro_especial(filter) {
+
+        this.filtro_especial.push(filter);
+    }
+
     filter_isempty() {
         return this.filtro.length === 0
     }
 
     filter_clear() {
         this.filtro = [];
+    }
+
+    filtro_especial_clear() {
+        this.filtro_especial = [];
     }
 
     filter_reset() {
@@ -130,6 +141,8 @@ datatable_nominas.init_datatable();
 
 let sl_categoria = $("#categoria_id");
 let sl_registro_patronal = $("#em_registro_patronal_id");
+let txt_fecha_inicio = $("#fecha_inicio");
+let txt_fecha_final = $("#fecha_final");
 
 $('input[type=radio][name=categorias]').change(function () {
     var seccion = this.value;
@@ -177,6 +190,38 @@ sl_registro_patronal.change(function () {
 
     datatable_nominas.draw;
 });
+
+txt_fecha_final.change(function () {
+
+    var fecha_inicio = txt_fecha_inicio.val();
+
+    if (fecha_inicio == ""){
+        fecha_inicio = "2000-01-01";
+    }
+
+    if (this.value !== "") {
+        datatable_nominas.add_filtro_especial({
+            "key": "nom_nomina.fecha_pago",
+            "valor": fecha_inicio,
+            "operador": "<=",
+            "comparacion": "AND"
+        });
+
+        datatable_nominas.add_filtro_especial({
+            "key": "nom_nomina.fecha_pago",
+            "valor": this.value,
+            "operador": ">=",
+            "comparacion": "AND"
+        });
+
+    } else {
+        datatable_nominas.filtro_especial_clear();
+    }
+
+    datatable_nominas.draw;
+});
+
+
 
 /*
 $('a:contains("Exportar Nominas")').click(function(e) {
