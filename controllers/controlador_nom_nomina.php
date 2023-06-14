@@ -190,7 +190,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
         $categoria = "";
         $fecha_inicio = date('d/m/Y', strtotime("01-01-2000"));
-        $fecha_final = date('d/m/Y', strtotime("01-01-2000"));
+        $fecha_final = date('d/m/Y');
 
         if (isset($datos['categorias']) && isset($datos['categoria_id']) && $datos['categorias'] !== "" && $datos['categoria_id'] !== "") {
             $filtro[$datos['categorias'] . ".id"] = $datos['categoria_id'];
