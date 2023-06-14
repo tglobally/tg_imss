@@ -269,7 +269,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             die('Error');
         }
 
-        $name = "REPORTE DE NOMINAS_$categoria";
+        $name = "REPORTE DE NOMINAS_$categoria_value";
 
         $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
             data: $data, styles: Reporte_Template::REPORTE_NOMINA);
