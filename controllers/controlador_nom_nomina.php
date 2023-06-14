@@ -261,8 +261,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
         $periodo = "$fecha_inicio - $fecha_final";
 
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(categoria: $categoria, categoria_value: $categoria_value, periodo: $periodo, remunerados: 0,
-            total_registros: 1, registros: $registros);
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(categoria: $categoria, categoria_value: $categoria_value, periodo:
+            $periodo, remunerados: 0, total_registros: $nominas->n_registros, registros: $registros);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
             print_r($error);
