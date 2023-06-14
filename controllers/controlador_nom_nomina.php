@@ -478,7 +478,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 $nomina['em_empleado_nss'],
                 $nomina['em_registro_patronal_descripcion'],
                 $org_sucursal_estado['dp_estado_descripcion'],
-                "empresa",
+                $nomina['org_empresa_razon_social'],
                 $em_empleado_estado['dp_estado_descripcion'],
                 $meses[1],
                 $periodo,
