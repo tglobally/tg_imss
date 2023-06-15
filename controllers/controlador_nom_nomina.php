@@ -227,7 +227,11 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             $filtro_rango['nom_nomina.fecha_pago'] = ['valor1' => $datos['fecha_inicio'], 'valor2' => $datos['fecha_final']];
         }
 
-        $nominas = (new nom_nomina($this->link))->filtro_and(extra_join: $extra_join, filtro: $filtro,filtro_rango: $filtro_rango);
+        $columnas = array('nom_nomina_id', 'org_sucursal_dp_calle_pertenece_id', 'em_empleado_dp_calle_pertenece_id',
+            'fc_factura_id', 'fc_factura_com_sucursal_id');
+
+        $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
+            filtro_rango: $filtro_rango);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas, header: $header, ws: $ws);
         }
@@ -338,25 +342,31 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $total_otros_descuentos = 0;
 
         foreach ($nominas as $nomina) {
-            $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
+            $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id'],
+                columnas: array('dp_estado_descripcion'));
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener el estado', data: $org_sucursal_estado);
             }
 
-            $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id']);
+            $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id'],
+                columnas: array('dp_estado_descripcion'));
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener el estado', data: $em_empleado_estado);
             }
 
-            $timbrado = (new fc_cfdi_sellado($this->link))->filtro_and(filtro: array("fc_factura_id" => $nomina['fc_factura_id']), limit: 1);
+            $timbrado = (new fc_cfdi_sellado($this->link))->filtro_and(columnas: array('fc_cfdi_sellado_uuid'),
+                filtro: array("fc_factura_id" => $nomina['fc_factura_id']), limit: 1);
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener cfdi sellado', data: $timbrado);
             }
 
-            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id']);
+            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id'],
+                columnas: array('com_sucursal_descripcion'));
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
             }
+
+            print_r($cliente_nomina);exit();
 
             $campos['subsidio'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Subsidio');
