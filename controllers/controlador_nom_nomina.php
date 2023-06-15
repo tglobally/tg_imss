@@ -229,7 +229,10 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
         $columnas = array('nom_nomina_id', 'org_sucursal_dp_calle_pertenece_id', 'em_empleado_dp_calle_pertenece_id',
             'fc_factura_id', 'fc_factura_com_sucursal_id', 'nom_periodo_fecha_inicial_pago', 'nom_periodo_fecha_inicial_pago',
-            'cat_sat_periodicidad_pago_nom_n_dias');
+            'cat_sat_periodicidad_pago_nom_n_dias', 'em_empleado_salario_diario', 'em_registro_patronal_cat_sat_isn_id',
+            'em_empleado_id', 'em_empleado_fecha_inicio_rel_laboral', 'fc_factura_folio', 'em_empleado_ap', 'em_empleado_am',
+            'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss', 'em_registro_patronal_descripcion',
+            'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id');
 
         $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
             filtro_rango: $filtro_rango);
@@ -243,7 +246,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             print_r($error);
             die('Error');
         }
-
 
         $categoria_value = "";
 
@@ -436,9 +438,11 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 strtotime($nomina['nom_periodo_fecha_inicial_pago'])));
             $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
 
-            print_r($periodo);exit();
+            $sueldo = $nomina['em_empleado_salario_diario'];
 
-            $sueldo = 1;
+            if (($fecha_inicio->diff($fecha_final))->days > 0){
+                $sueldo = ($fecha_inicio->diff($fecha_final))->days * $nomina['em_empleado_salario_diario'];
+            }
 
             $percepciones['total'] += $sueldo + $otros_pagos['subsidios']['total'];
 
@@ -474,8 +478,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener factor de ingracion', data: $fi);
             }
-
-
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -538,10 +540,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             $total_percepciones += $percepciones['total'];
             $total_otros_ingresos += $percepciones['otros_ingresos']['total'];
             $total_otros_descuentos += $deducciones['otros_descuentos']['total'];
-
-
         }
-
 
         $totales = array_fill(0, '53', '');
         $totales[23] = $total_otros_ingresos;
