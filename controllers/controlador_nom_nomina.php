@@ -228,7 +228,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         }
 
         $columnas = array('nom_nomina_id', 'org_sucursal_dp_calle_pertenece_id', 'em_empleado_dp_calle_pertenece_id',
-            'fc_factura_id', 'fc_factura_com_sucursal_id');
+            'fc_factura_id', 'fc_factura_com_sucursal_id', 'nom_periodo_fecha_inicial_pago', 'nom_periodo_fecha_inicial_pago',
+            'cat_sat_periodicidad_pago_nom_n_dias');
 
         $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
             filtro_rango: $filtro_rango);
@@ -366,8 +367,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
             }
 
-            print_r($cliente_nomina);exit();
-
             $campos['subsidio'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Subsidio');
             $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
@@ -404,22 +403,16 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
             $campos_deduccion['infonavit'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'INFONAVIT');
-
             $campos_deduccion['isr'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'ISR');
-
             $campos_deduccion['imss'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'IMSS');
-
             $campos_deduccion['fonacot'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'FONACOT');
-
             $campos_deduccion['pension_alimenticia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'PENSION ALIMENTICIA');
-
             $campos_deduccion['otros_descuentos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'Otros Descuentos');
-
             $campos_deduccion['descuento_comedor'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR');
 
@@ -427,7 +420,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener totales de deducciones', data: $deducciones);
             }
-
 
             $campos_otro_pago['subsidios'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_otro_pago.es_subsidio" => 'activo');
@@ -438,8 +430,13 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 return $this->errores->error(mensaje: 'Error al obtener totales de otros pagos', data: $otros_pagos);
             }
 
+            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y',
+                strtotime($nomina['nom_periodo_fecha_inicial_pago'])));
+            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y',
+                strtotime($nomina['nom_periodo_fecha_inicial_pago'])));
+            $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
 
-            $periodo = "PERIODO";
+            print_r($periodo);exit();
 
             $sueldo = 1;
 
