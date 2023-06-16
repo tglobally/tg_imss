@@ -232,7 +232,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             'cat_sat_periodicidad_pago_nom_n_dias', 'em_empleado_salario_diario', 'em_registro_patronal_cat_sat_isn_id',
             'em_empleado_id', 'em_empleado_fecha_inicio_rel_laboral', 'fc_factura_folio', 'em_empleado_ap', 'em_empleado_am',
             'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss', 'em_registro_patronal_descripcion',
-            'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id');
+            'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id', 'com_cliente_razon_social');
 
         $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
             filtro_rango: $filtro_rango);
@@ -472,12 +472,14 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             if ($timbrado->n_registros > 0) {
                 $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
             }
-
+/*
             $fi = (new em_empleado($this->link))->obten_factor(em_empleado_id: $nomina['em_empleado_id'],
                 fecha_inicio_rel: $nomina['em_empleado_fecha_inicio_rel_laboral']);
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener factor de ingracion', data: $fi);
-            }
+            }*/
+
+            $fi = 1.00;
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -528,7 +530,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 $deducciones['descuento_comedor']['total'],
                 $deducciones['total'],
                 $neto_imss,
-                "POR REVISAR",
+                0.00,
                 $base_isn,
                 $tasa_isn,
                 $importe_isn,
