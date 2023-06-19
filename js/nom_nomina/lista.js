@@ -50,8 +50,14 @@ class Datatable {
                         ]
                     }
 
+                },
+
+                error: function(data, e, es) {
+                    // Request failed
+                    console.log(data);
                 }
             },
+
             columns: self.columns,
         });
     }
@@ -134,7 +140,7 @@ const columns = [
 
 
 const datatable_nominas = new Datatable("#nom_nomina", columns);
-datatable_nominas.add_columns(["em_empleado_nombres", "em_empleado_ap", "em_empleado_am", "em_registro_patronal_id"]);
+datatable_nominas.add_columns(["em_empleado_nombre", "em_empleado_ap", "em_empleado_am", "em_registro_patronal_id"]);
 
 datatable_nominas.init_datatable();
 
