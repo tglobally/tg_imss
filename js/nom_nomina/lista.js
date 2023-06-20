@@ -50,11 +50,6 @@ class Datatable {
                         ]
                     }
 
-                },
-
-                error: function(data, e, es) {
-                    // Request failed
-                    console.log(data);
                 }
             },
 

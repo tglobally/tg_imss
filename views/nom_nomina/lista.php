@@ -53,7 +53,12 @@
                              -->
                         </div>
                         <div class="col-sm-6">
-                            <!-- <div class="card-subtitle text-disabled">Reportes Ordinarios</div>-->
+                            <div class="card-subtitle text-disabled">
+                                Reportes Ordinarios
+
+
+
+                            </div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success export" name="btn_action_next"

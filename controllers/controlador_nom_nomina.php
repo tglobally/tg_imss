@@ -11,6 +11,7 @@ use gamboamartin\errores\errores;
 
 use gamboamartin\facturacion\models\fc_cfdi_sellado;
 use gamboamartin\nomina\models\em_empleado;
+use gamboamartin\nomina\models\nom_clasificacion;
 use gamboamartin\nomina\models\nom_par_deduccion;
 use gamboamartin\nomina\models\nom_par_otro_pago;
 use gamboamartin\nomina\models\nom_par_percepcion;
@@ -28,6 +29,8 @@ use tglobally\tg_nomina\models\tg_manifiesto;
 class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlador_nom_nomina
 {
     public string $link_nom_nomina_exportar_nominas = '';
+    public array $nom_clasificacion = array();
+
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
@@ -139,6 +142,14 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             die('Error');
         }
 
+        $nom_clasificacion = (new nom_clasificacion($this->link))->filtro_and();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener registros de clasificacion de nominas', data: $nom_clasificacion);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->nom_clasificacion = $nom_clasificacion->registros;
         $this->inputs = $inputs;
 
         return (array)$r_alta;
@@ -232,7 +243,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             'cat_sat_periodicidad_pago_nom_n_dias', 'em_empleado_salario_diario', 'em_registro_patronal_cat_sat_isn_id',
             'em_empleado_id', 'em_empleado_fecha_inicio_rel_laboral', 'fc_factura_folio', 'em_empleado_ap', 'em_empleado_am',
             'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss', 'em_registro_patronal_descripcion',
-            'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id', 'com_cliente_razon_social');
+            'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id', 'com_cliente_razon_social',
+            "em_empleado_nombre_completo");
 
         $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
             filtro_rango: $filtro_rango);
