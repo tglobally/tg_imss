@@ -41,6 +41,13 @@ class Datatable {
                                 "renombre": "com_sucursal"
                             },
                             {
+                                "entidad": "nom_clasificacion_nomina",
+                                "key": "nom_nomina_id",
+                                "enlace": "nom_nomina",
+                                "key_enlace": "id",
+                                "renombre": "nom_clasificacion_nomina"
+                            },
+                            {
                                 "entidad": "com_cliente",
                                 "key": "id",
                                 "enlace": "com_sucursal",
@@ -135,7 +142,8 @@ const columns = [
 
 
 const datatable_nominas = new Datatable("#nom_nomina", columns);
-datatable_nominas.add_columns(["em_empleado_nombre", "em_empleado_ap", "em_empleado_am", "em_registro_patronal_id"]);
+datatable_nominas.add_columns(["em_empleado_nombre", "em_empleado_ap", "em_empleado_am", "em_registro_patronal_id",
+    "nom_clasificacion_nomina_descripcion"]);
 
 datatable_nominas.init_datatable();
 
