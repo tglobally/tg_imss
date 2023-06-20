@@ -53,12 +53,16 @@
                              -->
                         </div>
                         <div class="col-sm-6">
-                            <div class="card-subtitle text-disabled">
-                                Reportes Ordinarios
+                            <div class="card-subtitle text-disabled mb-2"> Reportes Ordinarios</div>
 
-
-
-                            </div>
+                            <?php foreach ($controlador->nom_clasificacion as $clasificacion): ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="<?php echo $clasificacion['nom_clasificacion_id'];?>" id="<?php echo $clasificacion['nom_clasificacion_id'];?>">
+                                    <label class="form-check-label text-uppercase" for="flexCheckDefault">
+                                        <?php echo $clasificacion['nom_clasificacion_descripcion'];?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success export" name="btn_action_next"
