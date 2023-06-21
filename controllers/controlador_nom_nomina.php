@@ -12,6 +12,7 @@ use gamboamartin\errores\errores;
 use gamboamartin\facturacion\models\fc_cfdi_sellado;
 use gamboamartin\nomina\models\em_empleado;
 use gamboamartin\nomina\models\nom_clasificacion;
+use gamboamartin\nomina\models\nom_clasificacion_nomina;
 use gamboamartin\nomina\models\nom_par_deduccion;
 use gamboamartin\nomina\models\nom_par_otro_pago;
 use gamboamartin\nomina\models\nom_par_percepcion;
@@ -198,6 +199,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $filtro = array();
         $extra_join = array();
         $filtro_rango = array();
+        $clasificaciones = array();
 
         $categoria = "";
         $fecha_inicio = date('d/m/Y', strtotime("01-01-2000"));
@@ -238,6 +240,20 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             $filtro_rango['nom_nomina.fecha_pago'] = ['valor1' => $datos['fecha_inicio'], 'valor2' => $datos['fecha_final']];
         }
 
+        if (isset($datos['nom_clasificacion_id']) && !empty($datos['nom_clasificacion_id'])){
+            $clasificaciones['llave'] = "nom_clasificacion.id";
+            $clasificaciones['values'] = array();
+
+            foreach ($datos['nom_clasificacion_id'] as $row){
+                $clasificaciones['values'][] = $row;
+            }
+        }
+
+        $registros = (new nom_clasificacion($this->link))->filtro_and(in: $clasificaciones);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener clasificaciones', data: $registros, header: $header, ws: $ws);
+        }
+
         $columnas = array('nom_nomina_id', 'org_sucursal_dp_calle_pertenece_id', 'em_empleado_dp_calle_pertenece_id',
             'fc_factura_id', 'fc_factura_com_sucursal_id', 'nom_periodo_fecha_inicial_pago', 'nom_periodo_fecha_inicial_pago',
             'cat_sat_periodicidad_pago_nom_n_dias', 'em_empleado_salario_diario', 'em_registro_patronal_cat_sat_isn_id',
@@ -246,47 +262,71 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id', 'com_cliente_razon_social',
             "em_empleado_nombre_completo");
 
-        $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
-            filtro_rango: $filtro_rango);
-        if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas, header: $header, ws: $ws);
-        }
-
-        $registros = $this->fill_data(nominas: $nominas->registros, fecha_inicio: $fecha_inicio, fecha_fin: $fecha_final);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
-            print_r($error);
-            die('Error');
-        }
-
+        $data = array();
         $categoria_value = "";
 
-        if ($categoria !== "") {
-            switch ($categoria) {
-                case "em_empleado":
-                    $categoria = "EMPLEADO";
-                    $categoria_value = $nominas->registros[0]["em_empleado_nombre_completo"];
-                    break;
-                case "org_empresa":
-                    $categoria = "EMPRESA";
-                    $categoria_value = $nominas->registros[0]["org_empresa_razon_social"];
-                    break;
-                case "com_cliente":
-                    $categoria = "CLIENTE";
-                    $categoria_value = $nominas->registros[0]["com_cliente_razon_social"];
-                    break;
+        foreach ($registros->registros as $row){
+
+            $clasificacion_nominas = (new nom_clasificacion_nomina($this->link))->filtro_and(filtro: array("nom_clasificacion.id" => $row['nom_clasificacion_id']));
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener nominas clasificadas', data: $clasificacion_nominas,
+                    header: $header, ws: $ws);
+            }
+
+            if ($clasificacion_nominas->n_registros > 0){
+                $in = array();
+                $in['llave'] = "nom_nomina.id";
+                $in['values'] = array();
+
+                foreach ($clasificacion_nominas->registros as $registro){
+                    $in['values'][] = $registro['nom_nomina_id'];
+                }
+
+                $nominas = (new nom_nomina($this->link))->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
+                    filtro_rango: $filtro_rango,in: $in);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas, header: $header, ws: $ws);
+                }
+
+                $fill_data = $this->fill_data(nominas: $nominas->registros, fecha_inicio: $fecha_inicio, fecha_fin: $fecha_final);
+                if (errores::$error) {
+                    $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $fill_data);
+                    print_r($error);
+                    die('Error');
+                }
+
+                if ($categoria !== "") {
+                    switch ($categoria) {
+                        case "em_empleado":
+                            $categoria = "EMPLEADO";
+                            $categoria_value = $nominas->registros[0]["em_empleado_nombre_completo"];
+                            break;
+                        case "org_empresa":
+                            $categoria = "EMPRESA";
+                            $categoria_value = $nominas->registros[0]["org_empresa_razon_social"];
+                            break;
+                        case "com_cliente":
+                            $categoria = "CLIENTE";
+                            $categoria_value = $nominas->registros[0]["com_cliente_razon_social"];
+                            break;
+                        default:
+                            $categoria = "GENERALES";
+                            $categoria_value = "SALIDA GENERAL";
+                    }
+                }
+
+                $periodo = "$fecha_inicio - $fecha_final";
+
+                $data[$row['nom_clasificacion_descripcion']] = $this->maqueta_salida(categoria: $categoria, categoria_value: $categoria_value, periodo:
+                    $periodo, remunerados: 0, total_registros: $nominas->n_registros, registros: $fill_data);
+                if (errores::$error) {
+                    $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+                    print_r($error);
+                    die('Error');
+                }
             }
         }
 
-        $periodo = "$fecha_inicio - $fecha_final";
-
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(categoria: $categoria, categoria_value: $categoria_value, periodo:
-            $periodo, remunerados: 0, total_registros: $nominas->n_registros, registros: $registros);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
-            print_r($error);
-            die('Error');
-        }
 
         $name = "REPORTE DE NOMINAS_$categoria_value";
 
@@ -356,7 +396,15 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $total_otros_ingresos = 0;
         $total_otros_descuentos = 0;
 
+
+
         foreach ($nominas as $nomina) {
+
+            if (empty($nomina['org_sucursal_dp_calle_pertenece_id'])){
+                return $this->errores->error(mensaje: 'No existe org_sucursal_dp_calle_pertenece_id para la nomina: '. $nomina['nom_nomina_id'],
+                    data: $nomina);
+            }
+
             $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id'],
                 columnas: array('dp_estado_descripcion'));
             if (errores::$error) {

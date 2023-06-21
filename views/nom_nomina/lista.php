@@ -57,7 +57,7 @@
 
                             <?php foreach ($controlador->nom_clasificacion as $clasificacion): ?>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="<?php echo $clasificacion['nom_clasificacion_id'];?>" id="<?php echo $clasificacion['nom_clasificacion_id'];?>">
+                                    <input class="form-check-input" type="checkbox" name="nom_clasificacion_id[]" value="<?php echo $clasificacion['nom_clasificacion_id'];?>" id="<?php echo $clasificacion['nom_clasificacion_id'];?>">
                                     <label class="form-check-label text-uppercase" for="flexCheckDefault">
                                         <?php echo $clasificacion['nom_clasificacion_descripcion'];?>
                                     </label>
@@ -65,7 +65,7 @@
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success export" name="btn_action_next"
+                    <button type="submit" class="btn btn-primary export" name="btn_action_next"
                             style="border-radius: 5px" value="exportar" form="form_export">
                         Exportar
                     </button>
