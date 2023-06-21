@@ -297,6 +297,10 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                     return $this->retorno_error(mensaje: 'No se pudo obtener las nominas', data: $nominas, header: $header, ws: $ws);
                 }
 
+                if ($nominas->n_registros <= 0){
+                    continue;
+                }
+
                 $registros = $this->fill_data(nominas: $nominas->registros);
                 if (errores::$error) {
                     $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
@@ -404,24 +408,32 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $total_otros_descuentos = 0;
 
 
-
         foreach ($nominas as $nomina) {
 
-            if (empty($nomina['org_sucursal_dp_calle_pertenece_id'])){
-                return $this->errores->error(mensaje: 'No existe org_sucursal_dp_calle_pertenece_id para la nomina: '. $nomina['nom_nomina_id'],
-                    data: $nomina);
+            $org_sucursal_estado = "No se encontro el registro relacionado";
+            $em_empleado_estado = "No se encontro el registro relacionado";
+            $cliente_nomina = "No se encontro el registro relacionado";
+
+            if (!empty($nomina['org_sucursal_dp_calle_pertenece_id'])){
+                /*return $this->errores->error(mensaje: 'No existe org_sucursal_dp_calle_pertenece_id para la nomina: '. $nomina['nom_nomina_id'],
+                    data: $nomina);*/
+                $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id'],
+                    columnas: array('dp_estado_descripcion'));
+                if (errores::$error) {
+                    return $this->errores->error(mensaje: 'Error al obtener el estado', data: $org_sucursal_estado);
+                }
+
+                $org_sucursal_estado = $org_sucursal_estado['dp_estado_descripcion'];
             }
 
-            $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id'],
-                columnas: array('dp_estado_descripcion'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener el estado', data: $org_sucursal_estado);
-            }
+            if (!empty($nomina['em_empleado_dp_calle_pertenece_id'])){
+                $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id'],
+                    columnas: array('dp_estado_descripcion'));
+                if (errores::$error) {
+                    return $this->errores->error(mensaje: 'Error al obtener el estado', data: $em_empleado_estado);
+                }
 
-            $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id'],
-                columnas: array('dp_estado_descripcion'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener el estado', data: $em_empleado_estado);
+                $em_empleado_estado = $em_empleado_estado['dp_estado_descripcion'];
             }
 
             $timbrado = (new fc_cfdi_sellado($this->link))->filtro_and(columnas: array('fc_cfdi_sellado_uuid'),
@@ -430,10 +442,14 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 return $this->errores->error(mensaje: 'Error al obtener cfdi sellado', data: $timbrado);
             }
 
-            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id'],
-                columnas: array('com_sucursal_descripcion'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
+            if (!empty($nomina['fc_factura_com_sucursal_id'])){
+                $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id'],
+                    columnas: array('com_sucursal_descripcion'));
+                if (errores::$error) {
+                    return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
+                }
+
+                $cliente_nomina = $cliente_nomina['com_sucursal_descripcion'];
             }
 
             $campos['subsidio'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
@@ -499,16 +515,25 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 return $this->errores->error(mensaje: 'Error al obtener totales de otros pagos', data: $otros_pagos);
             }
 
-            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y',
-                strtotime($nomina['nom_periodo_fecha_inicial_pago'])));
-            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y',
-                strtotime($nomina['nom_periodo_fecha_inicial_pago'])));
-            $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
-
+            $fecha_inicio = "";
+            $fecha_final = "";
+            $periodo = "";
             $sueldo = $nomina['em_empleado_salario_diario'];
 
-            if (($fecha_inicio->diff($fecha_final))->days > 0){
-                $sueldo = ($fecha_inicio->diff($fecha_final))->days * $nomina['em_empleado_salario_diario'];
+            if (!empty($nomina['nom_periodo_fecha_inicial_pago'])){
+                $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y',
+                    strtotime($nomina['nom_periodo_fecha_inicial_pago'])));
+            }
+
+            if (!empty($nomina['nom_periodo_fecha_final_pago'])){
+                $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y',
+                    strtotime($nomina['fecha_final_pago'])));
+
+                $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
+
+                if (($fecha_inicio->diff($fecha_final))->days > 0){
+                    $sueldo = ($fecha_inicio->diff($fecha_final))->days * $nomina['em_empleado_salario_diario'];
+                }
             }
 
             $percepciones['total'] += $sueldo + $otros_pagos['subsidios']['total'];
@@ -532,7 +557,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
             $tasa_isn = $cat_sat_isn['cat_sat_isn_porcentaje'] / 100;
             $importe_isn = $base_isn * $tasa_isn;
-            $cliente = $cliente_nomina['com_sucursal_descripcion'];
+
 
             $uuid = "";
 
@@ -555,9 +580,9 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 $nomina['em_empleado_rfc'],
                 $nomina['em_empleado_nss'],
                 $nomina['em_registro_patronal_descripcion'],
-                $org_sucursal_estado['dp_estado_descripcion'],
+                $org_sucursal_estado,
                 $nomina['org_empresa_razon_social'],
-                $em_empleado_estado['dp_estado_descripcion'],
+                $em_empleado_estado,
                 $meses[1],
                 $periodo,
                 $uuid,
@@ -601,7 +626,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 $base_isn,
                 $tasa_isn,
                 $importe_isn,
-                $cliente
+                $cliente_nomina
             ];
             $registros[] = $registro;
 
@@ -618,6 +643,8 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $totales[46] = $total_deducciones;
 
         $registros[] = $totales;
+
+
 
         return $registros;
     }
