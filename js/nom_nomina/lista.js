@@ -23,8 +23,8 @@ class Datatable {
                 data: function (d) {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
                     d.filtros = {
-                        filtro: self.filtro,
-                        filtro_especial: self.filtro_especial,
+                       /* filtro: self.filtro,
+                        filtro_especial: self.filtro_especial,*/
                         extra_join: [
                             {
                                 "entidad": "tg_empleado_sucursal",
