@@ -54,13 +54,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
             die('Error');
         }
 
-        $acciones = $this->define_acciones_menu(acciones: array("Exportar Nominas" => $this->link_nom_nomina_exportar_nominas));
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
-            print_r($error);
-            die('Error');
-        }
-
         $data_for_datable = (new datatables())->datatable_base_init(
             datatables: $datatables, link: $this->link, rows_lista: $this->rows_lista, seccion: $this->seccion,
             not_actions: $this->not_actions);
