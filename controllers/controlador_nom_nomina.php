@@ -409,7 +409,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
 
 
         foreach ($nominas as $nomina) {
-
             $org_sucursal_estado = "No se encontro el registro relacionado";
             $em_empleado_estado = "No se encontro el registro relacionado";
             $cliente_nomina = "No se encontro el registro relacionado";
@@ -422,7 +421,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 if (errores::$error) {
                     return $this->errores->error(mensaje: 'Error al obtener el estado', data: $org_sucursal_estado);
                 }
-
                 $org_sucursal_estado = $org_sucursal_estado['dp_estado_descripcion'];
             }
 
@@ -432,7 +430,6 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 if (errores::$error) {
                     return $this->errores->error(mensaje: 'Error al obtener el estado', data: $em_empleado_estado);
                 }
-
                 $em_empleado_estado = $em_empleado_estado['dp_estado_descripcion'];
             }
 

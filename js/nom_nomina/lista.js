@@ -165,7 +165,7 @@ $('input[type=radio][name=categorias]').change(function () {
 
     get_data2(seccion, accion, {}, sl_categoria, extra_params);
 
-    $('label[for=com_cliente_id]').html(titulo);
+    $('label[for=categoria_id]').html(titulo);
 
     datatable_nominas.filter_reset();
 });
