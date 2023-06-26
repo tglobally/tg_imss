@@ -23,5 +23,4 @@
     <?php echo $controlador->inputs->salario_diario; ?>
     <?php echo $controlador->inputs->salario_diario_integrado; ?>
     <?php echo $controlador->inputs->salario_total; ?>
-
 </form>
