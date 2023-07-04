@@ -23,8 +23,8 @@ class Datatable {
                 data: function (d) {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
                     d.filtros = {
-                       /* filtro: self.filtro,
-                        filtro_especial: self.filtro_especial,*/
+                        filtro: self.filtro,
+                        //filtro_especial: self.filtro_especial,
                         extra_join: [
                             {
                                 "entidad": "tg_empleado_sucursal",
@@ -140,7 +140,6 @@ const columns = [
 
 ]
 
-
 const datatable_nominas = new Datatable("#nom_nomina", columns);
 datatable_nominas.add_columns(["em_empleado_nombre", "em_empleado_ap", "em_empleado_am", "em_registro_patronal_id",
     "nom_clasificacion_nomina_descripcion"]);
@@ -184,7 +183,7 @@ sl_categoria.change(function () {
 
     datatable_nominas.draw;
 });
-
+/*
 sl_registro_patronal.change(function () {
 
     if (this.value !== "" && this.value != -1) {
@@ -232,7 +231,7 @@ txt_fecha_final.change(function () {
 
 
 
-/*
+
 $('a:contains("Exportar Nominas")').click(function(e) {
     e.preventDefault();
 
