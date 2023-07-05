@@ -183,7 +183,7 @@ sl_categoria.change(function () {
 
     datatable_nominas.draw;
 });
-/*
+
 sl_registro_patronal.change(function () {
 
     if (this.value !== "" && this.value != -1) {
@@ -198,7 +198,7 @@ sl_registro_patronal.change(function () {
 
     datatable_nominas.draw;
 });
-
+/*
 txt_fecha_final.change(function () {
 
     var fecha_inicio = txt_fecha_inicio.val();
