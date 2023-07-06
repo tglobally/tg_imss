@@ -23,7 +23,8 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
         $this->seccion_titulo = "Anticipos";
         $this->titulo_accion = "Listado de Anticipos";
 
-        $acciones = $this->define_acciones_menu(acciones: array("Importar Registros" => $this->link_em_anticipo_importar_anticipos));
+        $acciones = $this->define_acciones_menu(acciones: array("Alta" => $this->link_alta,
+            "Importar Registros" => $this->link_em_anticipo_importar_anticipos));
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);
