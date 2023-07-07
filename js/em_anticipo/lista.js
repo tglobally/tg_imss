@@ -22,6 +22,10 @@ class Datatable {
                 url: this.url,
                 data: function (d) {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
+                    d.filtros = {
+                        filtro: self.filtro,
+                        //filtro_especial: self.filtro_especial,
+                    }
                 }
             },
 
@@ -88,7 +92,7 @@ const columns = [
     },
     {
         title: 'Remunerado',
-        data: 'em_empleado_nombre'
+        data: 'em_empleado_nombre_completo'
     },
     {
         title: 'Amortización',
@@ -96,9 +100,9 @@ const columns = [
     }
 ]
 
-const datatable_nominas = new Datatable("#em_anticipo", columns);
+const datatable_anticipos = new Datatable("#em_anticipo", columns);
 
-datatable_nominas.init_datatable();
+datatable_anticipos.init_datatable();
 
 let sl_categoria = $("#org_empresa_id");
 
@@ -111,5 +115,21 @@ $('input[type=radio][name=categorias]').change(function () {
 
     $('label[for=org_empresa_id]').html(titulo);
 
-    datatable_nominas.filter_reset();
+    datatable_anticipos.filter_reset();
+});
+
+sl_categoria.change(function () {
+    var seccion = $('[type=radio][name="categorias"]:checked').val();
+
+    if (this.value !== "" && this.value != -1) {
+        datatable_anticipos.add_filter({
+            "key": seccion + ".id",
+            "valor": this.value,
+        });
+
+    } else {
+        datatable_anticipos.filter_clear();
+    }
+
+    datatable_anticipos.draw;
 });
