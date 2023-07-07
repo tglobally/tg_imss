@@ -100,4 +100,16 @@ const datatable_nominas = new Datatable("#em_anticipo", columns);
 
 datatable_nominas.init_datatable();
 
+let sl_categoria = $("#org_empresa_id");
 
+$('input[type=radio][name=categorias]').change(function () {
+    var seccion = this.value;
+    var accion = $(this).data("accion");
+    var titulo = $(this).data("titulo");
+
+    get_data2(seccion, accion, {}, sl_categoria);
+
+    $('label[for=org_empresa_id]').html(titulo);
+
+    datatable_nominas.filter_reset();
+});
