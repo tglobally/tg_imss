@@ -25,6 +25,17 @@ class Datatable {
                     d.filtros = {
                         filtro: self.filtro,
                         //filtro_especial: self.filtro_especial,
+                        extra_join: [
+                            {
+                                "entidad": "adm_usuario",
+                                "key": "id",
+                                "enlace": "em_anticipo",
+                                "key_enlace": "usuario_alta_id",
+                                "renombre": "adm_usuario"
+                            },
+
+                        ]
+
                     }
                 }
             },
