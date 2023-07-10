@@ -12,7 +12,7 @@
              data-coreui-parent="#accordionFlushExample">
             <div class="accordion-body">
 
-                <form action="<?php echo $controlador->link_nom_nomina_exportar_nominas; ?>" method="post" class="form-additional" id="form_export">
+                <form action="<?php echo $controlador->link_em_anticipo_exportar_anticipos; ?>" method="post" class="form-additional" id="form_export">
                     <div class="card-title fs-6 fw-semibold">Seleccione una opción de busqueda:</div>
                     <div>
                         <div class="card-subtitle text-disabled">Seleccione una categoría</div>
