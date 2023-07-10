@@ -33,7 +33,13 @@ class Datatable {
                                 "key_enlace": "usuario_alta_id",
                                 "renombre": "adm_usuario"
                             },
-
+                            {
+                                "entidad": "org_empresa",
+                                "key": "id",
+                                "enlace": "org_sucursal",
+                                "key_enlace": "org_empresa_id",
+                                "renombre": "org_empresa"
+                            }
                         ]
 
                     }
