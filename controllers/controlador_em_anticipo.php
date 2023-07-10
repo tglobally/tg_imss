@@ -10,10 +10,13 @@ namespace tglobally\tg_imss\controllers;
 
 
 
+use gamboamartin\empleado\models\em_anticipo;
 use gamboamartin\errores\errores;
+use gamboamartin\plugins\exportador;
 use PDO;
 use stdClass;
 use gamboamartin\system\system;
+use tglobally\tg_nomina\controllers\Reporte_Template;
 
 class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\controlador_em_anticipo {
 
@@ -46,7 +49,6 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
         $filtro = array();
         $filtro_rango = array();
         $extra_join = array();
-        $in = array();
         $categoria = "";
 
         $fecha_inicio = date('Y/m/d', strtotime("01-01-2000"));
@@ -60,64 +62,139 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
             $fecha_final = date('Y/m/d', strtotime($_POST['fecha_final']));
         }
 
-        if (isset($_POST['em_registro_patronal_id']) && $_POST['em_registro_patronal_id'] !== "" &&
-            $_POST['em_registro_patronal_id'] > 0) {
-            $filtro["em_registro_patronal.id"] = $_POST['em_registro_patronal_id'];
-        }
-
-        if (isset($_POST['categorias']) && isset($_POST['categoria_id']) &&
-            $_POST['categorias'] !== "" && $_POST['categoria_id'] !== "" && $_POST['categoria_id'] > 0) {
-            $filtro[$_POST['categorias'] . ".id"] = $_POST['categoria_id'];
+        if (isset($_POST['categorias']) && isset($_POST['org_empresa_id']) &&
+            $_POST['categorias'] !== "" && $_POST['org_empresa_id'] !== "" && $_POST['org_empresa_id'] > 0) {
+            $filtro[$_POST['categorias'] . ".id"] = $_POST['org_empresa_id'];
             $categoria = $_POST['categorias'];
         }
 
-        if (isset($_POST['nom_clasificacion_id']) && !empty($_POST['nom_clasificacion_id'])){
-            $in['llave'] = "nom_clasificacion.id";
-            $in['values'] = array();
+        $filtro_rango['em_anticipo.fecha_prestacion'] = ['valor1' => $fecha_inicio, 'valor2' => $fecha_final];
 
-            foreach ($_POST['nom_clasificacion_id'] as $row){
-                $in['values'][] = $row;
-            }
+        $extra_join["org_empresa"]['key'] = "id";
+        $extra_join["org_empresa"]['enlace'] = "org_sucursal";
+        $extra_join["org_empresa"]['key_enlace'] = "org_empresa_id";
+        $extra_join["org_empresa"]['renombre'] = "org_empresa";
+
+        $extra_join["adm_usuario"]['key'] = "id";
+        $extra_join["adm_usuario"]['enlace'] = "em_anticipo";
+        $extra_join["adm_usuario"]['key_enlace'] = "usuario_alta_id";
+        $extra_join["adm_usuario"]['renombre'] = "adm_usuario";
+
+        return array("extra_join" => $extra_join, "filtro" => $filtro, "filtro_rango" => $filtro_rango,
+            "categoria" => $categoria, "fecha_inicio" => $fecha_inicio,
+            "fecha_final" => $fecha_final);
+    }
+
+    private function fill_data(array $anticipos): array
+    {
+        $registros = array();
+
+        foreach ($anticipos as $anticipo) {
+            $registro = [
+                $anticipo['em_empleado_nss'],
+                $anticipo['em_empleado_codigo'],
+                $anticipo['em_empleado_nombre_completo'],
+                $anticipo['em_registro_patronal_descripcion'],
+                $anticipo['em_anticipo_descripcion'],
+                $anticipo['em_anticipo_monto'],
+                0,
+                $anticipo['em_anticipo_abonos'],
+                $anticipo['em_anticipo_saldo'],
+                $anticipo['adm_usuario_nombre'].' '.$anticipo['adm_usuario_ap'],
+                $anticipo['em_anticipo_fecha_alta'],
+                $anticipo['em_anticipo_comentarios'],
+                "CLIENTE",
+            ];
+            $registros[] = $registro;
         }
 
-        $filtro_rango['nom_nomina.fecha_pago'] = ['valor1' => $fecha_inicio, 'valor2' => $fecha_final];
+        return $registros;
+    }
 
-        $extra_join["tg_empleado_sucursal"]['key'] = "em_empleado_id";
-        $extra_join["tg_empleado_sucursal"]['enlace'] = "em_empleado";
-        $extra_join["tg_empleado_sucursal"]['key_enlace'] = "id";
-        $extra_join["tg_empleado_sucursal"]['renombre'] = "tg_empleado_sucursal";
+    private function maqueta_salida(string $categoria, string $categoria_value, string $periodo, int $total_registros,
+                                    array $registros): array
+    {
+        $tabla['detalles'] = [
+            ["titulo" => $categoria, 'valor' => $categoria_value],
+            ["titulo" => 'PERIODO:', 'valor' => $periodo],
+            ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
+        ];
 
-        $extra_join["com_sucursal"]['key'] = "id";
-        $extra_join["com_sucursal"]['enlace'] = "tg_empleado_sucursal";
-        $extra_join["com_sucursal"]['key_enlace'] = "com_sucursal_id";
-        $extra_join["com_sucursal"]['renombre'] = "com_sucursal";
+        $tabla['headers'] = ['NSS', 'ID', 'NOMBRE', 'REGISTRO PATRONAL', 'CONCEPTO', 'IMPORTE', 'DESC. NOMINAL', 'PAGOS',
+            'SALDO', 'EJECUTIVO IMSS', 'FECHA/HORA CAPTURA', 'COMENTARIOS', 'CLIENTE'];
+        $tabla['data'] = $registros;
+        $tabla['startRow'] = 4;
+        $tabla['startColumn'] = "A";
 
-        $extra_join["com_cliente"]['key'] = "id";
-        $extra_join["com_cliente"]['enlace'] = "com_sucursal";
-        $extra_join["com_cliente"]['key_enlace'] = "com_cliente_id";
-        $extra_join["com_cliente"]['renombre'] = "com_cliente";
-
-        $columnas = array('nom_nomina_id', 'org_sucursal_dp_calle_pertenece_id', 'em_empleado_dp_calle_pertenece_id',
-            'fc_factura_id', 'fc_factura_com_sucursal_id', 'nom_periodo_fecha_inicial_pago', 'nom_periodo_fecha_inicial_pago',
-            'cat_sat_periodicidad_pago_nom_n_dias', 'em_empleado_salario_diario', 'em_registro_patronal_cat_sat_isn_id',
-            'em_empleado_id', 'em_empleado_fecha_inicio_rel_laboral', 'fc_factura_folio', 'em_empleado_ap', 'em_empleado_am',
-            'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss', 'em_registro_patronal_descripcion',
-            'org_empresa_razon_social', 'em_empleado_salario_diario_integrado', 'org_empresa_id', 'com_cliente_razon_social',
-            "em_empleado_nombre_completo");
-
-        return array("columnas" => $columnas, "extra_join" => $extra_join, "filtro" => $filtro, "in" => $in,
-            "filtro_rango" => $filtro_rango, "categoria" => $categoria, "fecha_inicio" => $fecha_inicio,
-            "fecha_final" => $fecha_final);
+        return array($tabla);
     }
 
     public function exportar_anticipos(bool $header, bool $ws = false): array|stdClass
     {
+        $filtros = $this->get_filtros();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'No se pudo generar los filtros', data: $filtros, header: $header, ws: $ws);
+        }
 
+        $anticipos = (new em_anticipo($this->link))->filtro_and(extra_join: $filtros['extra_join'],
+            filtro: $filtros['filtro'], filtro_rango: $filtros['filtro_rango']);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'No se pudo obtener los anticipos', data: $anticipos, header: $header, ws: $ws);
+        }
 
+        $data = array();
 
+        $registros = $this->fill_data(anticipos: $anticipos->registros);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
+            print_r($error);
+            die('Error');
+        }
 
-        header('Location:' . $this->link_lista);
-        exit;
+        switch ($filtros['categoria']) {
+            case "em_empleado":
+                $categoria = "EMPLEADO";
+                $categoria_value = $anticipos->registros[0]["em_empleado_nombre_completo"];
+                break;
+            case "org_empresa":
+                $categoria = "EMPRESA";
+                $categoria_value = $anticipos->registros[0]["org_sucursal_org_empresa_id"];
+                break;
+            case "adm_usuario":
+                $categoria = "USUARIO";
+                $categoria_value = $anticipos->registros[0]["adm_usuario_nombre"];
+                break;
+            default:
+                $categoria = "GENERALES";
+                $categoria_value = "SALIDA GENERAL";
+        }
+
+        $periodo = $filtros['fecha_inicio']."  -  ".$filtros['fecha_final'];
+
+        $data["REPORTE GENERAL"] = $this->maqueta_salida(categoria: $categoria,
+            categoria_value: $categoria_value, periodo: $periodo, total_registros: $anticipos->n_registros,
+            registros: $registros);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+            print_r($error);
+            die('Error');
+        }
+
+        $name = "REPORTE DE ANTICIPOS_$categoria_value";
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
+            data: $data, styles: Reporte_Template::REPORTE_GENERAL);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        print_r($data);
+        exit();
     }
 
     protected function campos_view(): array
