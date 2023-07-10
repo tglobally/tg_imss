@@ -24,7 +24,7 @@ class Datatable {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
                     d.filtros = {
                         filtro: self.filtro,
-                        //filtro_especial: self.filtro_especial,
+                        filtro_especial: self.filtro_especial,
                         extra_join: [
                             {
                                 "entidad": "adm_usuario",
@@ -112,6 +112,10 @@ const columns = [
         data: 'em_empleado_nombre_completo'
     },
     {
+        title: 'Fecha Prestación',
+        data: 'em_anticipo_fecha_prestacion'
+    },
+    {
         title: 'Amortización',
         data: 'em_anticipo_monto'
     }
@@ -122,6 +126,8 @@ const datatable_anticipos = new Datatable("#em_anticipo", columns);
 datatable_anticipos.init_datatable();
 
 let sl_categoria = $("#org_empresa_id");
+let txt_fecha_inicio = $("#fecha_inicio");
+let txt_fecha_final = $("#fecha_final");
 
 $('input[type=radio][name=categorias]').change(function () {
     var seccion = this.value;
@@ -146,6 +152,72 @@ sl_categoria.change(function () {
 
     } else {
         datatable_anticipos.filter_clear();
+    }
+
+    datatable_anticipos.draw;
+});
+
+txt_fecha_inicio.change(function () {
+
+    datatable_anticipos.filtro_especial_clear();
+
+    var fecha_final = txt_fecha_final.val();
+
+    if (fecha_final == ""){
+        const date = new Date();
+
+        let year= date.getFullYear();
+        let month= String(date.getMonth()+1).padStart(2,"0");
+        let day= String(date.getDate()).padStart(2, '0');
+
+        fecha_final = `${year}-${month}-${day}`;
+    }
+
+    if (this.value !== "") {
+
+        datatable_anticipos.add_filtro_especial({
+            "key": "em_anticipo.fecha_prestacion",
+            "valor": this.value,
+            "operador": "<=",
+            "comparacion": "AND"
+        });
+
+        datatable_anticipos.add_filtro_especial({
+            "key": "em_anticipo.fecha_prestacion",
+            "valor": fecha_final,
+            "operador": ">=",
+            "comparacion": "AND"
+        });
+    }
+
+    datatable_anticipos.draw;
+});
+
+txt_fecha_final.change(function () {
+
+    datatable_anticipos.filtro_especial_clear();
+
+    var fecha_inicio = txt_fecha_inicio.val();
+
+    if (fecha_inicio == ""){
+        fecha_inicio = "2000-01-01";
+    }
+
+    if (this.value !== "") {
+
+        datatable_anticipos.add_filtro_especial({
+            "key": "em_anticipo.fecha_prestacion",
+            "valor": fecha_inicio,
+            "operador": "<=",
+            "comparacion": "AND"
+        });
+
+        datatable_anticipos.add_filtro_especial({
+            "key": "em_anticipo.fecha_prestacion",
+            "valor": this.value,
+            "operador": ">=",
+            "comparacion": "AND"
+        });
     }
 
     datatable_anticipos.draw;
