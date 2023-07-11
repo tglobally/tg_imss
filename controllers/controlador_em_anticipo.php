@@ -176,16 +176,20 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
                 break;
             case "org_empresa":
                 $categoria = "EMPRESA:";
-                $categoria_value = $anticipos->registros[0]["org_sucursal_org_empresa_id"];
+                $categoria_value = $anticipos->registros[0]["org_sucursal_descripcion"];
                 break;
             case "adm_usuario":
                 $categoria = "USUARIO:";
-                $categoria_value = $anticipos->registros[0]["adm_usuario_nombre"];
+                $categoria_value = $anticipos->registros[0]["adm_usuario_nombre"]. " ";
+                $categoria_value .= $anticipos->registros[0]["adm_usuario_ap"]. " ";
+                $categoria_value .= $anticipos->registros[0]["adm_usuario_am"];
                 break;
             default:
                 $categoria = "GENERALES";
                 $categoria_value = "SALIDA GENERAL";
         }
+
+        $categoria_value = strtoupper($categoria_value);
 
         $periodo = $filtros['fecha_inicio']."  -  ".$filtros['fecha_final'];
 
