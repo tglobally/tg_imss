@@ -16,8 +16,6 @@ use gamboamartin\errores\errores;
 use gamboamartin\plugins\exportador;
 use PDO;
 use stdClass;
-use gamboamartin\system\system;
-use tglobally\tg_nomina\controllers\Reporte_Template;
 
 class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\controlador_em_anticipo {
 
@@ -173,15 +171,15 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
 
         switch ($filtros['categoria']) {
             case "em_empleado":
-                $categoria = "EMPLEADO";
+                $categoria = "EMPLEADO:";
                 $categoria_value = $anticipos->registros[0]["em_empleado_nombre_completo"];
                 break;
             case "org_empresa":
-                $categoria = "EMPRESA";
+                $categoria = "EMPRESA:";
                 $categoria_value = $anticipos->registros[0]["org_sucursal_org_empresa_id"];
                 break;
             case "adm_usuario":
-                $categoria = "USUARIO";
+                $categoria = "USUARIO:";
                 $categoria_value = $anticipos->registros[0]["adm_usuario_nombre"];
                 break;
             default:
