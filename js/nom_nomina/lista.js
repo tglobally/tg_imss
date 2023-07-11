@@ -24,7 +24,7 @@ class Datatable {
                     d.columns = self.columns.map(column => column.data).concat(self.extra_columns);
                     d.filtros = {
                         filtro: self.filtro,
-                        //filtro_especial: self.filtro_especial,
+                        filtro_especial: self.filtro_especial,
                         extra_join: [
                             {
                                 "entidad": "tg_empleado_sucursal",
@@ -114,12 +114,12 @@ const columns = [
         data: 'nom_nomina_id'
     },
     {
-        title: 'RFC',
-        data: 'em_empleado_rfc'
-    },
-    {
         title: 'Empleado',
         data: 'em_empleado_nombre_completo'
+    },
+    {
+        title: 'Registro Patronal',
+        data: 'em_registro_patronal_descripcion'
     },
     {
         title: '# Días Pagados',
@@ -168,6 +168,7 @@ $('input[type=radio][name=categorias]').change(function () {
 
     datatable_nominas.filter_reset();
 });
+
 sl_categoria.change(function () {
     var seccion = $('[type=radio][name="categorias"]:checked').val();
 
@@ -198,7 +199,78 @@ sl_registro_patronal.change(function () {
 
     datatable_nominas.draw;
 });
+
+txt_fecha_inicio.change(function () {
+
+    datatable_nominas.filtro_especial_clear();
+
+    var fecha_final = txt_fecha_final.val();
+
+    if (fecha_final == ""){
+        const date = new Date();
+
+        let year= date.getFullYear();
+        let month= String(date.getMonth()+1).padStart(2,"0");
+        let day= String(date.getDate()).padStart(2, '0');
+
+        fecha_final = `${year}-${month}-${day}`;
+    }
+
+    if (this.value !== "") {
+
+        datatable_nominas.add_filtro_especial({
+            "key": "nom_nomina.fecha_pago",
+            "valor": this.value,
+            "operador": "<=",
+            "comparacion": "AND"
+        });
+
+        datatable_nominas.add_filtro_especial({
+            "key": "nom_nomina.fecha_pago",
+            "valor": fecha_final,
+            "operador": ">=",
+            "comparacion": "AND"
+        });
+    }
+
+    datatable_nominas.draw;
+});
+
+txt_fecha_final.change(function () {
+
+    datatable_nominas.filtro_especial_clear();
+
+    var fecha_inicio = txt_fecha_inicio.val();
+
+    if (fecha_inicio == ""){
+        fecha_inicio = "2000-01-01";
+    }
+
+    if (this.value !== "") {
+
+        datatable_nominas.add_filtro_especial({
+            "key": "nom_nomina.fecha_pago",
+            "valor": fecha_inicio,
+            "operador": "<=",
+            "comparacion": "AND"
+        });
+
+        datatable_nominas.add_filtro_especial({
+            "key": "nom_nomina.fecha_pago",
+            "valor": this.value,
+            "operador": ">=",
+            "comparacion": "AND"
+        });
+    }
+
+    datatable_nominas.draw;
+});
+
+
+
 /*
+
+
 txt_fecha_final.change(function () {
 
     var fecha_inicio = txt_fecha_inicio.val();
