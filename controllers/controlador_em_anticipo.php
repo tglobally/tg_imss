@@ -10,6 +10,7 @@ namespace tglobally\tg_imss\controllers;
 
 
 
+use gamboamartin\comercial\models\com_cliente;
 use gamboamartin\empleado\models\em_anticipo;
 use gamboamartin\errores\errores;
 use gamboamartin\plugins\exportador;
@@ -90,6 +91,25 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
         $registros = array();
 
         foreach ($anticipos as $anticipo) {
+
+            $extra_join["com_sucursal"]['key'] = "com_cliente_id";
+            $extra_join["com_sucursal"]['enlace'] = "com_cliente";
+            $extra_join["com_sucursal"]['key_enlace'] = "id";
+            $extra_join["com_sucursal"]['renombre'] = "com_sucursal";
+
+            $extra_join["tg_empleado_sucursal"]['key'] = "com_sucursal_id";
+            $extra_join["tg_empleado_sucursal"]['enlace'] = "com_sucursal";
+            $extra_join["tg_empleado_sucursal"]['key_enlace'] = "id";
+            $extra_join["tg_empleado_sucursal"]['renombre'] = "tg_empleado_sucursal";
+
+            $cliente = (new com_cliente($this->link))->filtro_and(extra_join: $extra_join,
+                filtro: array("tg_empleado_sucursal.em_empleado_id" => $anticipo['em_empleado_id']),limit: 1);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener cliente', data: $cliente);
+                print_r($error);
+                die('Error');
+            }
+
             $registro = [
                 $anticipo['em_empleado_nss'],
                 $anticipo['em_empleado_codigo'],
@@ -103,7 +123,7 @@ class controlador_em_anticipo extends \tglobally\tg_empleado\controllers\control
                 $anticipo['adm_usuario_nombre'].' '.$anticipo['adm_usuario_ap'],
                 $anticipo['em_anticipo_fecha_alta'],
                 $anticipo['em_anticipo_comentarios'],
-                "CLIENTE",
+                ($cliente->n_registros <= 0)? "SIN REGISTRO RELACIONADO":$cliente->registros[0]['com_cliente_descripcion'],
             ];
             $registros[] = $registro;
         }
