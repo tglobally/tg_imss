@@ -180,6 +180,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
         $categoria_value = "";
 
         foreach ($clasificaciones->registros as $clasificacion){
+
             $clasificacion_nominas = (new nom_clasificacion_nomina($this->link))->filtro_and(columnas: array('nom_nomina_id'),
                 filtro: array("nom_clasificacion.id" => $clasificacion['nom_clasificacion_id']));
             if (errores::$error) {
@@ -200,6 +201,14 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 }
 
                 if ($nominas->n_registros <= 0){
+                    $data[$clasificacion['nom_clasificacion_descripcion']] = $this->maqueta_salida(categoria: "GENERALES",
+                        categoria_value: "SALIDA GENERAL", periodo: "", remunerados: 0, total_registros: 0,
+                        registros: array());
+                    if (errores::$error) {
+                        $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+                        print_r($error);
+                        die('Error');
+                    }
                     continue;
                 }
 
@@ -240,6 +249,7 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                 }
             }
         }
+
 
         $name = "REPORTE DE NOMINAS_$categoria_value";
 
