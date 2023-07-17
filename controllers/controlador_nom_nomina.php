@@ -247,6 +247,18 @@ class controlador_nom_nomina extends \tglobally\tg_nomina\controllers\controlado
                     print_r($error);
                     die('Error');
                 }
+            } else {
+                $categoria = "GENERALES";
+                $categoria_value = "SALIDA GENERAL";
+
+                $data[$clasificacion['nom_clasificacion_descripcion']] = $this->maqueta_salida(categoria: $categoria,
+                    categoria_value: $categoria_value, periodo: "", remunerados: 0, total_registros: 0,
+                    registros: array());
+                if (errores::$error) {
+                    $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+                    print_r($error);
+                    die('Error');
+                }
             }
         }
 
